@@ -62,7 +62,6 @@ class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
         loadData()
         startLocationUpdates()
         destroyInfo()
-        var change:String
 
     }
 
