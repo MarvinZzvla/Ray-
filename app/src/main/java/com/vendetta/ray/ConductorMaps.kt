@@ -185,16 +185,12 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
     }
 
-    override fun onResume() {
-        super.onResume()
-        startLocationUpdates()
-    }
 
     override fun onPause() {
         super.onPause()
         stopLocationUpdates()
         destroyInfoNow()
-        Intent(this,PasajeroHome::class.java).apply { startActivity(this) }
+        Intent(this,ConductorHome::class.java).apply { startActivity(this) }
 
     }
 
