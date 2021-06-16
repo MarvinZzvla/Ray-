@@ -33,8 +33,11 @@
             android:value="@string/google_maps_key" />
 
         <activity
+            android:name=".ConductorMaps"
+            android:label="@string/title_activity_conductor_maps"></activity>
+        <activity
             android:name=".test"
-            android:label="@string/title_activity_test"></activity>
+            android:label="@string/title_activity_test" />
         <activity
             android:name=".PasajeroMaps"
             android:label="@string/title_activity_pasajero_maps" />

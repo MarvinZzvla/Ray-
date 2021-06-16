@@ -4,10 +4,9 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -18,16 +17,8 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ServerValue
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.vendetta.ray.databinding.ActivityPasajeroMapsBinding
 import kotlinx.android.synthetic.main.activity_pasajero_latitude.*
@@ -42,6 +33,7 @@ class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
    private lateinit var locationRequest : LocationRequest
    private lateinit var locationCallback: LocationCallback
 
+   var myCoordenadas = Location("0")
 
 
 
@@ -52,7 +44,7 @@ class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
         setContentView(binding.root)
 
         val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment
+            .findFragmentById(R.id.Cmap) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         title = "Mapa"
@@ -62,7 +54,8 @@ class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
         loadData()
         startLocationUpdates()
         destroyInfo()
-        
+
+
 
     }
 
@@ -81,6 +74,27 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
         var database = Firebase.database.getReference("PasajeroLooking").child(auth?.uid.toString())
         database.setValue(dataUser(name, apellido, locationActual))
     }
+    }
+
+    fun loadUsers() {
+        var list = arrayListOf<LatLng>()
+        var n = 0
+        Firebase.database.getReference("ConductorLooking").get().addOnSuccessListener {
+
+            if (it != null){
+        for (ds in it.children) {
+            var lat = ds.child("locationActual").child("latitude").getValue()
+            var long = ds.child("locationActual").child("longitude").getValue()
+
+            var location = Location("0").apply {
+                this.latitude = lat as Double
+                this.longitude = long as Double
+            }
+            println("Su Conductor esta :" + myCoordenadas.distanceTo(location).toInt())
+
+        }
+    }else{Toast.makeText(this,"No hay motos disponibles en este momento intente mas tarde",Toast.LENGTH_LONG).show()}
+        }
     }
 
 
@@ -107,6 +121,7 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
                     mMap.clear()
                     loadData()
                     agregarMarcador(location.latitude,location.longitude)
+                    loadUsers()
 
 
                 }
@@ -117,8 +132,11 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
 
     fun agregarMarcador(lat:Double, long:Double){
 
-        println("SE REPITIO")
+
         var coordenadas = LatLng(lat,long)
+        myCoordenadas.latitude = lat
+        myCoordenadas.longitude= long
+
         var auth = Firebase.auth.currentUser
         var database = Firebase.database.getReference("MyUsers").child(auth?.uid.toString()).child("Coordenadas")
         database.setValue(coordenadas)
@@ -186,11 +204,5 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
         mMap = google
     }
 
-    fun getAllUsers(){
-        var auth = Firebase.auth.currentUser
-        var database = Firebase.database.getReference("MyUsers").get().addOnSuccessListener {
-
-        }
-    }
 
 }

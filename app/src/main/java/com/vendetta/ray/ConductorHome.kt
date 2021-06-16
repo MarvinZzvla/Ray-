@@ -36,6 +36,11 @@ class ConductorHome : AppCompatActivity() {
 
         }
 
+        mapaBtn.setOnClickListener {
+            Intent(this,ConductorMaps::class.java).apply { startActivity(this) }
+        }
+
+
     }
     override fun onStart() {
         super.onStart()
