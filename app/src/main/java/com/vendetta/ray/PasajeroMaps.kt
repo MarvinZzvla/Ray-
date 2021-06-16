@@ -62,6 +62,8 @@ class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
         loadData()
         startLocationUpdates()
         destroyInfo()
+        var hello = "Im here in your code @marvinzzvla"
+        println(hello)
 
     }
 
