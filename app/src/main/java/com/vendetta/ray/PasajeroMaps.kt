@@ -77,8 +77,7 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
     }
 
     fun loadUsers() {
-        var list = arrayListOf<LatLng>()
-        var n = 0
+
         Firebase.database.getReference("ConductorLooking").get().addOnSuccessListener {
 
             if (it != null){

@@ -30,14 +30,14 @@ class ConductorHome : AppCompatActivity() {
             prefs.clear()
             //Apply Changes
             prefs.apply()
-            //Call Activiry
+            //Call Activity
             val intent = Intent(this,MainActivity::class.java)
             startActivity(intent)
 
         }
 
         mapaBtn.setOnClickListener {
-            Intent(this,ConductorMaps::class.java).apply { startActivity(this) }
+            Intent(this,ActivityTest::class.java).apply { startActivity(this) }
         }
 
 

@@ -36,11 +36,9 @@
             android:name=".ConductorMaps"
             android:label="@string/title_activity_conductor_maps"></activity>
         <activity
-            android:name=".test"
-            android:label="@string/title_activity_test" />
-        <activity
             android:name=".PasajeroMaps"
             android:label="@string/title_activity_pasajero_maps" />
+        <activity android:name=".ActivityTest"/>
         <activity android:name=".ConductorHome" />
         <activity android:name=".PasajeroHome" />
         <activity android:name=".RegistrarPasajero" />

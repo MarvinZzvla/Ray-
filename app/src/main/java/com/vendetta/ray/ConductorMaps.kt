@@ -17,6 +17,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.vendetta.ray.databinding.ActivityConductorMapsBinding
@@ -31,6 +32,7 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var locationCallback: LocationCallback
 
     private var myCoordenadas = Location("0")
+    private var list = arrayListOf<DataSnapshot>()
 
 
 
@@ -72,9 +74,8 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
     }
 
     fun loadUsers(){
-        var list = arrayListOf<LatLng>()
-        var n = 0
         Firebase.database.getReference("PasajeroLooking").get().addOnSuccessListener {
+
             if(it.exists()) {
                 for (ds in it.children) {
                     var lat = ds.child("locationActual").child("latitude").getValue()
@@ -84,23 +85,37 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
                         this.latitude = lat as Double
                         this.longitude = long as Double
                     }
-                    var coordenadas = LatLng(lat as Double, long as Double)
-                    var distancia = myCoordenadas.distanceTo(location).toString()
-                    addUsuario(coordenadas,distancia)
+                    var distancia = myCoordenadas.distanceTo(location).toInt()
 
-                    println("La distancia es: " + myCoordenadas.distanceTo(location).toInt())
-
-
+                    //Dectectar usuarios si estan a 1KM de distancia
+                    if(distancia <= 1000) {
+                        list.add(ds)
+                    }
                 }
-            } else{Toast.makeText(this,"No hay pasajeros disponibles en este momento intente mas tarde",Toast.LENGTH_SHORT).show()}
+                myAdd(list)
+
+            }
         }
-    }
 
-    fun addUsuario(coordenadas:LatLng, name: String){
-        mMap.addMarker(MarkerOptions().position(coordenadas).title(name + " Metros").icon(
-            BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_foreground)))
 
     }
+
+    fun myAdd(user: ArrayList<DataSnapshot>){
+
+        for (user in list){
+    var lat = user.child("locationActual").child("latitude").getValue() as Double
+    var long = user.child("locationActual").child("longitude").getValue() as Double
+    var coordenadas = LatLng(lat,long)
+    var thisLocation = Location("0").apply {this.latitude = lat; this.longitude = long}
+    var distance = myCoordenadas.distanceTo(thisLocation).toInt()
+    var name = user.child("name").getValue() as String + " " + user.child("apellido").getValue() as String
+    mMap.addMarker(MarkerOptions().position(coordenadas).title(" $name $distance Metros").icon(
+        BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_foreground)))
+}
+        list.clear()
+
+    }
+
 
     fun destroyInfo(){ Firebase.database.getReference("ConductorLooking").child(Firebase.auth?.uid.toString()).apply {this.onDisconnect().removeValue()}}
     fun destroyInfoNow(){ Firebase.database.getReference("ConductorLooking").child(Firebase.auth?.uid.toString()).apply {this.removeValue()} }
@@ -122,10 +137,11 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
                 if (p0.locations.isNotEmpty()) {
                     var location = p0.lastLocation
+                    loadUsers()
                     mMap.clear()
                     loadData()
                     agregarMarcador(location.latitude,location.longitude)
-                    loadUsers()
+
 
                 }
             }
@@ -146,7 +162,12 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
         mMap.addMarker(MarkerOptions().position(coordenadas).title("Zavala Aqui").icon(
             BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_foreground)))
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordenadas,16F))
+        var zoom = 16.5F
+        if(mMap.cameraPosition.zoom >= 16.5F){
+         zoom = mMap.cameraPosition.zoom}
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordenadas,zoom))
+
+
     }
 
 
