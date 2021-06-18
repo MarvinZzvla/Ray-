@@ -43,6 +43,8 @@ class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityPasajeroMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.Cmap) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -54,6 +56,8 @@ class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
         loadData()
         startLocationUpdates()
         destroyInfo()
+
+        println("Estoy aqui")
 
 
 
@@ -155,8 +159,9 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
                         Manifest.permission.ACCESS_COARSE_LOCATION
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
-                    ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),44)
+
                 }
+
                 fusedLocationClient.requestLocationUpdates(locationRequest,locationCallback,null)
 
 

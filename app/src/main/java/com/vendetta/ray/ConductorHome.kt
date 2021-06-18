@@ -37,7 +37,7 @@ class ConductorHome : AppCompatActivity() {
         }
 
         mapaBtn.setOnClickListener {
-            Intent(this,ActivityTest::class.java).apply { startActivity(this) }
+            Intent(this,ConductorUsers::class.java).apply { startActivity(this) }
         }
 
 

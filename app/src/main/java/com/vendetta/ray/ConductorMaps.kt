@@ -61,6 +61,8 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
     fun loadData()
     {
         val auth = Firebase.auth.currentUser
+
+
         Firebase.database.getReference("MyUsers").child(auth?.uid.toString()).get().addOnSuccessListener {
             var name = it.child("name").value.toString()
             var apellido = it.child("apellido").value.toString()
