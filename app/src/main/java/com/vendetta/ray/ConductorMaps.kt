@@ -49,10 +49,16 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
         title = "Conductor"
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-        getLocationUpdates()
-        loadData()
-        startLocationUpdates()
-        destroyInfo()
+
+        var name = intent.getStringExtra("name")?:""
+        var identificador = intent.getStringExtra("uI")?:""
+
+        println("EL USUARIO ES: " + name.toString() + " - " + identificador.toString())
+
+       // getLocationUpdates()
+        //loadData()
+       // startLocationUpdates()
+        //destroyInfo()
 
     }
 
@@ -213,7 +219,7 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
         super.onPause()
         stopLocationUpdates()
         destroyInfoNow()
-        Intent(this,ConductorHome::class.java).apply { startActivity(this) }
+
 
     }
 
@@ -221,9 +227,12 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
         super.onBackPressed()
         stopLocationUpdates()
         destroyInfoNow()
+        Intent(this,ConductorHome::class.java).apply { startActivity(this) }
     }
 
     override fun onMapReady(google: GoogleMap) {
         mMap = google
     }
+
+
 }

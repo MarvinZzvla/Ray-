@@ -23,29 +23,44 @@ import kotlinx.android.synthetic.main.activity_conductor_users.*
 import kotlinx.android.synthetic.main.activity_pasajero_latitude.*
 import org.w3c.dom.Text
 
+//VARIABLES FOR CHECK TIME AND DETAILS OF CALLBACK FUNCTION
 private lateinit var fusedLocationClient : FusedLocationProviderClient
 private lateinit var locationRequest : LocationRequest
 private lateinit var locationCallback: LocationCallback
 
+//VARIABLES FOR MAKE SENSE APP
 private var myCoordenadas = Location("0")
 private var list = arrayListOf<DataSnapshot>()
+private var aceptarBtn = false
 
 class ConductorUsers : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_conductor_users)
 
-
-        getLocationUpdates()
+        //Start request map every 5seg around 1KM
         startLocationUpdates()
+        //When disconnect stop looking people and destroy info
         destroyInfo()
     }
 
+    override fun onStart() {
+        super.onStart()
+        //Stop updates if the user change activity
+        aceptarBtn = false
+    }
 
+/*
+LOAD USERS
+Find users around 1km of us
+and add it to a list then display it
+ */
     fun loadUsers(){
+    //Get Pasajeros Looking
         Firebase.database.getReference("PasajeroLooking").get().addOnSuccessListener {
-
+    //Si existe
             if(it.exists()) {
+                //Obtener de cada usuario su localizacion
                 for (ds in it.children) {
                     var lat = ds.child("locationActual").child("latitude").getValue()
                     var long = ds.child("locationActual").child("longitude").getValue()
@@ -54,13 +69,15 @@ class ConductorUsers : AppCompatActivity() {
                         this.latitude = lat as Double
                         this.longitude = long as Double
                     }
+                    //Obtener distancia
                     var distancia = myCoordenadas.distanceTo(location).toInt()
 
                     //Dectectar usuarios si estan a 1KM de distancia
-                    if(distancia <= 8000) {
+                    if(distancia <= 1000) {
                         list.add(ds)
                     }
                 }
+                //Call myAdd
                 myAdd(list)
 
             }
@@ -69,6 +86,12 @@ class ConductorUsers : AppCompatActivity() {
 
     }
 
+    /*
+    MY ADD
+    A cada usuario en la lista obtener su localizacion
+    Y mostrarlo en pantalla
+    Despues de haber mostrados todos borrar lista y obtener una actualizada
+     */
     fun myAdd(user: ArrayList<DataSnapshot>){
 
         for (user in list){
@@ -78,61 +101,77 @@ class ConductorUsers : AppCompatActivity() {
             var thisLocation = Location("0").apply {this.latitude = lat; this.longitude = long}
             var distance = myCoordenadas.distanceTo(thisLocation).toInt()
             var name = user.child("name").getValue() as String + " " + user.child("apellido").getValue() as String
-            displayUsers(name,distance)
+            var uI = user.key.toString()
+            displayUsers(name,distance,uI)
 
 
         }
-
         list.clear()
-
-
-
 
     }
 
-     fun displayUsers(name:String,distancia:Int) {
+    /*
+    DISPLAY USERS
+    Crear Design de los usuarios que van a aparecer al usuario
 
-         println(name)
-         println(distancia)
+     */
 
-         println("ESTA VEZ ES: " + list.size)
+     fun displayUsers(name:String,distancia:Int,identificador:String) {
 
+         println(name + " - " + identificador)
+         println(distancia.toString() +" Metros")
 
+         println("Tienes  " + list.size + " Usuario esperando")
+
+            //TODO CREATE Textview para el nombre
              var myName = TextView(this)
              myName.text = name
              addUserListLayout.addView(myName)
 
+            //TODO Create Textview for distance from user
              var myDistancia = TextView(this)
              var distanciaName = "Distancia: " + distancia.toString() + " Metros"
              myDistancia.text = distanciaName
              addUserListLayout.addView(myDistancia)
 
-
+            //TODO Create a horizontal layout for sort buttons
              var horizontalLayout = LinearLayout(this)
              horizontalLayout.orientation = LinearLayout.HORIZONTAL
              addUserListLayout.addView(horizontalLayout)
-
+            //TODO Create buttons for accept or deny user
              var btn1 = Button(this)
              var btn2 = Button(this)
              btn1.text = "Rechazar"
              btn2.text = "Aceptar"
+
+
+         //TODO If user click accepts button
+            btn2.setOnClickListener {
+                //STOP REQUEST MAPS UPDATE
+                stopLocationUpdates()
+                //GO TO NEXT ACTIVITY
+                Intent(this,ConductorMaps::class.java).apply {
+                    //Mandar usuario, nombre y distancia
+                    this.putExtra("uI",identificador)
+                    this.putExtra("name",name)
+                    this.putExtra("distancia",distancia)
+                    destroyInfoNow()
+                        //Start activity
+                    startActivity(this)
+                }
+            }
+         //Agregar botonos al horizontal layout
              horizontalLayout.addView(btn1)
              horizontalLayout.addView(btn2)
-
-
-
-
-
-
-
-
-
-
     }
 
-
+//DATA USER FORMAT TO SEND TO FIREBASE
     data class DataUser(var name:String, var apellido:String, var locationActual: LatLng)
-
+/*
+LOAD DATA
+Update localizacion del usuario
+y mandarlo a la lista de ConductorLooking
+ */
     fun loadData(lat : Double, long :Double)
     {
         var coordenadas = LatLng(lat,long)
@@ -155,6 +194,11 @@ class ConductorUsers : AppCompatActivity() {
         }
     }
 
+    /*
+    GET LOCATION UPDATES
+    Get location of user and save it on a variable
+     */
+
     fun getLocationUpdates() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationRequest = LocationRequest()
@@ -168,13 +212,10 @@ class ConductorUsers : AppCompatActivity() {
                 super.onLocationResult(p0)
                 p0 ?: return
 
-                if (p0.locations.isNotEmpty()) {
+                if (p0.locations.isNotEmpty() &&!aceptarBtn) {
                     var location = p0.lastLocation
-
                     getLocationUpdates()
-
                     loadUsers()
-
                     loadData(location.latitude,location.longitude)
                     addUserListLayout.removeAllViews()
                 }
@@ -182,7 +223,13 @@ class ConductorUsers : AppCompatActivity() {
         }
     }
 
+    /*
+    START LOCATION UPDATES
+    If user allows request maps every 5seg
+     */
+
     fun startLocationUpdates(){
+        getLocationUpdates()
 
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -214,6 +261,7 @@ class ConductorUsers : AppCompatActivity() {
     }
 
     fun stopLocationUpdates(){
+        aceptarBtn = true
         fusedLocationClient.removeLocationUpdates(locationCallback)
 
     }
@@ -221,17 +269,16 @@ class ConductorUsers : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         stopLocationUpdates()
-        destroyInfoNow()
-        Intent(this,ConductorHome::class.java).apply { startActivity(this) }
+        //destroyInfoNow()
 
     }
+
 
     override fun onBackPressed() {
         super.onBackPressed()
         stopLocationUpdates()
         destroyInfoNow()
     }
-
 
 }
 
