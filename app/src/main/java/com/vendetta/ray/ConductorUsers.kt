@@ -6,22 +6,15 @@ import android.content.pm.PackageManager
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Layout
 import android.widget.*
-import androidx.constraintlayout.helper.widget.Layer
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_conductor_users.*
-import kotlinx.android.synthetic.main.activity_pasajero_latitude.*
-import org.w3c.dom.Text
 
 //VARIABLES FOR CHECK TIME AND DETAILS OF CALLBACK FUNCTION
 private lateinit var fusedLocationClient : FusedLocationProviderClient
@@ -126,18 +119,18 @@ and add it to a list then display it
             //TODO CREATE Textview para el nombre
              var myName = TextView(this)
              myName.text = name
-             addUserListLayout.addView(myName)
+             addDriverListLayout.addView(myName)
 
             //TODO Create Textview for distance from user
              var myDistancia = TextView(this)
              var distanciaName = "Distancia: " + distancia.toString() + " Metros"
              myDistancia.text = distanciaName
-             addUserListLayout.addView(myDistancia)
+             addDriverListLayout.addView(myDistancia)
 
             //TODO Create a horizontal layout for sort buttons
              var horizontalLayout = LinearLayout(this)
              horizontalLayout.orientation = LinearLayout.HORIZONTAL
-             addUserListLayout.addView(horizontalLayout)
+             addDriverListLayout.addView(horizontalLayout)
             //TODO Create buttons for accept or deny user
              var btn1 = Button(this)
              var btn2 = Button(this)
@@ -217,7 +210,7 @@ y mandarlo a la lista de ConductorLooking
                     getLocationUpdates()
                     loadUsers()
                     loadData(location.latitude,location.longitude)
-                    addUserListLayout.removeAllViews()
+                    addDriverListLayout.removeAllViews()
                 }
             }
         }

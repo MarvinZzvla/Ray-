@@ -22,6 +22,7 @@ class PasajeroHome : AppCompatActivity() {
         //Set Tittle to activity
         title="Home"
 
+
         //BOTON CERRAR SESION
         logOutButton.setOnClickListener {
             //SignOut de Firebase
@@ -39,7 +40,7 @@ class PasajeroHome : AppCompatActivity() {
 
         //Boton guardar
         saveBtn.setOnClickListener{
-            val i = Intent(this, PasajeroMaps::class.java)
+            val i = Intent(this, PasajeroUsers::class.java)
             startActivity(i)}
 
     }
