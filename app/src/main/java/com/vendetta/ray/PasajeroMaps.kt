@@ -57,7 +57,6 @@ class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
         startLocationUpdates()
         destroyInfo()
 
-        println("Estoy aqui")
 
 
 
@@ -75,28 +74,27 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
         var long = it.child("Coordenadas").child("longitude").value as Double
         var locationActual = LatLng(lat,long)
 
-        var database = Firebase.database.getReference("PasajeroLooking").child(auth?.uid.toString())
-        database.setValue(dataUser(name, apellido, locationActual))
+//        var database = Firebase.database.getReference("PasajeroLooking").child(auth?.uid.toString())
+//        database.setValue(dataUser(name, apellido, locationActual))
     }
     }
 
     fun loadUsers() {
+        var name = intent.getStringExtra("name") ?: ""
+        var identificador = intent.getStringExtra("uI") ?: ""
 
-        Firebase.database.getReference("ConductorLooking").get().addOnSuccessListener {
 
-            if (it != null){
-        for (ds in it.children) {
-            var lat = ds.child("locationActual").child("latitude").getValue()
-            var long = ds.child("locationActual").child("longitude").getValue()
+        Firebase.database.getReference("MyUsers").child(identificador).child("Coordenadas").get().addOnSuccessListener {
 
-            var location = Location("0").apply {
-                this.latitude = lat as Double
-                this.longitude = long as Double
+            if (it != null) {
+                var lat = it.child("latitude").getValue()
+                var long = it.child("longitude").getValue()
+                println("AQUI LA LATITUD: " + lat)
+                println("AQUI LA Longitud: " + long)
+                var coordenadas = LatLng(lat as Double, long as Double)
+                mMap.addMarker(MarkerOptions().position(coordenadas).title(name).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_foreground)))
+
             }
-            println("Su Conductor esta :" + myCoordenadas.distanceTo(location).toInt())
-
-        }
-    }else{Toast.makeText(this,"No hay motos disponibles en este momento intente mas tarde",Toast.LENGTH_LONG).show()}
         }
     }
 

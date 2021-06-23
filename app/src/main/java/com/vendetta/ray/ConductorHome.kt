@@ -2,6 +2,7 @@ package com.vendetta.ray
 
 import android.content.Context
 import android.content.Intent
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -19,7 +20,8 @@ class ConductorHome : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_conductor_home)
         //Set title to activity
-        title = "Home"
+        title = "Inicio - Conductor"
+
 
         //CERRAR SESION BOTON
         signOut_conductor.setOnClickListener {
@@ -37,7 +39,12 @@ class ConductorHome : AppCompatActivity() {
         }
 
         mapaBtn.setOnClickListener {
+            if(!isGpsOff()){
             Intent(this,ConductorUsers::class.java).apply { startActivity(this) }
+            }else{
+                MakeToast("Enciende tu GPS e intenta nuevamente")
+            }
+
         }
 
 
@@ -53,6 +60,14 @@ class ConductorHome : AppCompatActivity() {
         val i = Intent(applicationContext,MainActivity::class.java)
         startActivity(i)
     }
+
+    private fun MakeToast(text:String){Toast.makeText(this,text,Toast.LENGTH_LONG).show()}
+
+    private fun isGpsOff() :Boolean{
+        val manager = getSystemService(LOCATION_SERVICE) as LocationManager
+        return !manager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    }
+
 /*
 LAST LOGIN SAVE
  */

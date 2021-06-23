@@ -4,9 +4,13 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
+import android.location.LocationManager
 import android.os.Bundle
-import android.widget.*
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
@@ -15,6 +19,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_conductor_users.*
+
 
 //VARIABLES FOR CHECK TIME AND DETAILS OF CALLBACK FUNCTION
 private lateinit var fusedLocationClient : FusedLocationProviderClient
@@ -31,6 +36,7 @@ class ConductorUsers : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_conductor_users)
 
+
         //Start request map every 5seg around 1KM
         startLocationUpdates()
         //When disconnect stop looking people and destroy info
@@ -41,7 +47,10 @@ class ConductorUsers : AppCompatActivity() {
         super.onStart()
         //Stop updates if the user change activity
         aceptarBtn = false
+
     }
+
+    private fun MakeToast(text:String){Toast.makeText(this,text,Toast.LENGTH_LONG).show()}
 
 /*
 LOAD USERS
@@ -110,11 +119,6 @@ and add it to a list then display it
      */
 
      fun displayUsers(name:String,distancia:Int,identificador:String) {
-
-         println(name + " - " + identificador)
-         println(distancia.toString() +" Metros")
-
-         println("Tienes  " + list.size + " Usuario esperando")
 
             //TODO CREATE Textview para el nombre
              var myName = TextView(this)
@@ -187,12 +191,26 @@ y mandarlo a la lista de ConductorLooking
         }
     }
 
+    private fun isGpsOff(){
+        val manager = getSystemService(LOCATION_SERVICE) as LocationManager
+        println("HOLAAAA HAZIEL ESTOY AQUI")
+        if(!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            Intent(this,ConductorHome::class.java).apply {
+                MakeToast("Enciende tu GPS e intenta nuevamente")
+                startActivity(this)
+
+            }
+        }
+    }
+
+
     /*
     GET LOCATION UPDATES
     Get location of user and save it on a variable
      */
 
     fun getLocationUpdates() {
+        isGpsOff()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationRequest = LocationRequest()
         locationRequest.interval = 5000
@@ -204,14 +222,15 @@ y mandarlo a la lista de ConductorLooking
             override fun onLocationResult(p0: LocationResult) {
                 super.onLocationResult(p0)
                 p0 ?: return
+                    if (p0.locations.isNotEmpty() && !aceptarBtn) {
 
-                if (p0.locations.isNotEmpty() &&!aceptarBtn) {
-                    var location = p0.lastLocation
-                    getLocationUpdates()
-                    loadUsers()
-                    loadData(location.latitude,location.longitude)
-                    addDriverListLayout.removeAllViews()
-                }
+                        var location = p0.lastLocation
+                        getLocationUpdates()
+                        loadUsers()
+                        loadData(location.latitude, location.longitude)
+                        addDriverListLayout.removeAllViews()
+                    }
+
             }
         }
     }
@@ -250,7 +269,7 @@ y mandarlo a la lista de ConductorLooking
         if(requestCode == 44 && grantResults.size>0 &&grantResults[0] == PackageManager.PERMISSION_GRANTED){
             startLocationUpdates()
         }else{
-            Toast.makeText(this,"Porfavor da permisos a la aplicacion", Toast.LENGTH_LONG).show()}
+            Toast.makeText(this,"Porfavor activa tu GPS", Toast.LENGTH_SHORT).show()}
     }
 
     fun stopLocationUpdates(){
