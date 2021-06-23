@@ -35,7 +35,6 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
     private var list = arrayListOf<DataSnapshot>()
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -55,11 +54,15 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
         println("EL USUARIO ES: " + name.toString() + " - " + identificador.toString())
 
-       // getLocationUpdates()
-        //loadData()
-       // startLocationUpdates()
-        //destroyInfo()
+        getLocationUpdates()
+        loadData()
+        startLocationUpdates()
+        destroyInfo()
 
+    }
+
+    override fun onStart() {
+        super.onStart()
     }
 
     data class DataUser(var name:String, var apellido:String, var locationActual:LatLng)
@@ -126,7 +129,10 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
 
     fun destroyInfo(){ Firebase.database.getReference("ConductorLooking").child(Firebase.auth?.uid.toString()).apply {this.onDisconnect().removeValue()}}
-    fun destroyInfoNow(){ Firebase.database.getReference("ConductorLooking").child(Firebase.auth?.uid.toString()).apply {this.removeValue()} }
+    fun destroyInfoNow(){
+        var identificador = intent.getStringExtra("uI")?:""
+        Firebase.database.getReference("PasajeroLooking").child(identificador).child("Peticiones").child(Firebase.auth?.uid.toString()).apply {this.removeValue()}
+    }
 
 
     @Suppress("DEPRECATION")
@@ -149,7 +155,6 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
                     mMap.clear()
                     loadData()
                     agregarMarcador(location.latitude,location.longitude)
-
 
                 }
             }
@@ -205,7 +210,7 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if(requestCode == 44 && grantResults.size>0 &&grantResults[0] == PackageManager.PERMISSION_GRANTED){
             startLocationUpdates()
-        }else{Toast.makeText(this,"Porfavor da permisos a la aplicacin",Toast.LENGTH_LONG).show()}
+        }else{Toast.makeText(this,"Porfavor da permisos a la aplicacion",Toast.LENGTH_LONG).show()}
     }
 
 
@@ -214,12 +219,14 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        startLocationUpdates()
+    }
 
     override fun onPause() {
         super.onPause()
         stopLocationUpdates()
-        destroyInfoNow()
-
 
     }
 

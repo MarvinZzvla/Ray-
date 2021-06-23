@@ -1,11 +1,13 @@
 package com.vendetta.ray
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.Looper
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -22,6 +24,7 @@ import kotlinx.android.synthetic.main.activity_conductor_users.*
 
 
 //VARIABLES FOR CHECK TIME AND DETAILS OF CALLBACK FUNCTION
+@SuppressLint("StaticFieldLeak")
 private lateinit var fusedLocationClient : FusedLocationProviderClient
 private lateinit var locationRequest : LocationRequest
 private lateinit var locationCallback: LocationCallback
@@ -29,7 +32,7 @@ private lateinit var locationCallback: LocationCallback
 //VARIABLES FOR MAKE SENSE APP
 private var myCoordenadas = Location("0")
 private var list = arrayListOf<DataSnapshot>()
-private var aceptarBtn = false
+private var myName=""
 
 class ConductorUsers : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,16 +40,16 @@ class ConductorUsers : AppCompatActivity() {
         setContentView(R.layout.activity_conductor_users)
 
 
-        //Start request map every 5seg around 1KM
-        startLocationUpdates()
-        //When disconnect stop looking people and destroy info
-        destroyInfo()
     }
+
 
     override fun onStart() {
         super.onStart()
         //Stop updates if the user change activity
-        aceptarBtn = false
+        //Start request map every 5seg around 1KM
+        startLocationUpdates()
+        //When disconnect stop looking people and destroy info
+        destroyInfo()
 
     }
 
@@ -106,7 +109,6 @@ and add it to a list then display it
             var uI = user.key.toString()
             displayUsers(name,distance,uI)
 
-
         }
         list.clear()
 
@@ -144,25 +146,31 @@ and add it to a list then display it
 
          //TODO If user click accepts button
             btn2.setOnClickListener {
-                //STOP REQUEST MAPS UPDATE
-                stopLocationUpdates()
-                //GO TO NEXT ACTIVITY
-                Intent(this,ConductorMaps::class.java).apply {
-                    //Mandar usuario, nombre y distancia
-                    this.putExtra("uI",identificador)
-                    this.putExtra("name",name)
-                    this.putExtra("distancia",distancia)
-                    destroyInfoNow()
-                        //Start activity
-                    startActivity(this)
-                }
+                aceptarFunction(name,distancia,identificador)
+
             }
          //Agregar botonos al horizontal layout
              horizontalLayout.addView(btn1)
              horizontalLayout.addView(btn2)
     }
 
-//DATA USER FORMAT TO SEND TO FIREBASE
+    private fun aceptarFunction(name:String,distancia:Int,identificador:String) {
+
+        Firebase.database.getReference("PasajeroLooking").child(identificador).child("Peticiones").child(Firebase.auth.currentUser?.uid.toString()).setValue(myName)
+        Firebase.database.getReference("PasajeroLooking").child(identificador).child("Peticiones").child(Firebase.auth.currentUser?.uid.toString()).onDisconnect().removeValue()
+        //GO TO NEXT ACTIVITY
+        Intent(this,ConductorMaps::class.java).apply {
+            //Mandar usuario, nombre y distancia
+            this.putExtra("uI",identificador)
+            this.putExtra("name",name)
+            this.putExtra("distancia",distancia)
+            destroyInfoNow()
+            //Start activity
+            startActivity(this)
+        }
+    }
+
+    //DATA USER FORMAT TO SEND TO FIREBASE
     data class DataUser(var name:String, var apellido:String, var locationActual: LatLng)
 /*
 LOAD DATA
@@ -171,29 +179,33 @@ y mandarlo a la lista de ConductorLooking
  */
     fun loadData(lat : Double, long :Double)
     {
-        var coordenadas = LatLng(lat,long)
-        myCoordenadas.latitude = lat
-        myCoordenadas.longitude= long
-        val auth = Firebase.auth.currentUser
-        var database = Firebase.database.getReference("MyUsers").child(auth?.uid.toString()).child("Coordenadas")
-        database.setValue(coordenadas)
+            var coordenadas = LatLng(lat, long)
+            myCoordenadas.latitude = lat
+            myCoordenadas.longitude = long
+            val auth = Firebase.auth.currentUser
+            var database = Firebase.database.getReference("MyUsers").child(auth?.uid.toString())
+                .child("Coordenadas")
+            database.setValue(coordenadas)
 
 
-        Firebase.database.getReference("MyUsers").child(auth?.uid.toString()).get().addOnSuccessListener {
-            var name = it.child("name").value.toString()
-            var apellido = it.child("apellido").value.toString()
-            var lat = it.child("Coordenadas").child("latitude").value as Double
-            var long = it.child("Coordenadas").child("longitude").value as Double
-            var locationActual = LatLng(lat,long)
+            Firebase.database.getReference("MyUsers").child(auth?.uid.toString()).get()
+                .addOnSuccessListener {
+                    var name = it.child("name").value.toString()
+                    myName = name
+                    var apellido = it.child("apellido").value.toString()
+                    var lat = it.child("Coordenadas").child("latitude").value as Double
+                    var long = it.child("Coordenadas").child("longitude").value as Double
+                    var locationActual = LatLng(lat, long)
 
-            var database = Firebase.database.getReference("ConductorLooking").child(auth?.uid.toString())
-            database.setValue(DataUser(name, apellido, locationActual))
+                    var database = Firebase.database.getReference("ConductorLooking")
+                        .child(auth?.uid.toString())
+                    database.setValue(DataUser(name, apellido, locationActual))
+
         }
     }
 
     private fun isGpsOff(){
         val manager = getSystemService(LOCATION_SERVICE) as LocationManager
-        println("HOLAAAA HAZIEL ESTOY AQUI")
         if(!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
             Intent(this,ConductorHome::class.java).apply {
                 MakeToast("Enciende tu GPS e intenta nuevamente")
@@ -204,35 +216,38 @@ y mandarlo a la lista de ConductorLooking
     }
 
 
-    /*
-    GET LOCATION UPDATES
-    Get location of user and save it on a variable
-     */
-
-    fun getLocationUpdates() {
-        isGpsOff()
+    private fun requestSetting(){
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationRequest = LocationRequest()
         locationRequest.interval = 5000
         locationRequest.fastestInterval = 5000
         // locationRequest.smallestDisplacement = 170f
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        locationCallback = object : LocationCallback() {
+    }
 
-            override fun onLocationResult(p0: LocationResult) {
-                super.onLocationResult(p0)
-                p0 ?: return
-                    if (p0.locations.isNotEmpty() && !aceptarBtn) {
+    /*
+    GET LOCATION UPDATES
+    Get location of user and save it on a variable
+     */
 
+    fun getLocationUpdates() {
+
+            locationCallback = object : LocationCallback() {
+
+                override fun onLocationResult(p0: LocationResult) {
+                    super.onLocationResult(p0)
+                    p0 ?: return
+                    if (p0.locations.isNotEmpty()) {
                         var location = p0.lastLocation
-                        getLocationUpdates()
+                        isGpsOff()
                         loadUsers()
                         loadData(location.latitude, location.longitude)
                         addDriverListLayout.removeAllViews()
                     }
 
+                }
+
             }
-        }
     }
 
     /*
@@ -241,6 +256,7 @@ y mandarlo a la lista de ConductorLooking
      */
 
     fun startLocationUpdates(){
+        requestSetting()
         getLocationUpdates()
 
         if (ActivityCompat.checkSelfPermission(
@@ -273,15 +289,14 @@ y mandarlo a la lista de ConductorLooking
     }
 
     fun stopLocationUpdates(){
-        aceptarBtn = true
         fusedLocationClient.removeLocationUpdates(locationCallback)
-
     }
 
     override fun onPause() {
         super.onPause()
+//        Intent(this,ConductorHome::class.java).apply { startActivity(this) }
         stopLocationUpdates()
-        //destroyInfoNow()
+        destroyInfoNow()
 
     }
 

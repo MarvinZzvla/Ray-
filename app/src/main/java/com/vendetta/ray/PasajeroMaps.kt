@@ -4,13 +4,11 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
-
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -21,8 +19,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.vendetta.ray.databinding.ActivityPasajeroMapsBinding
-import kotlinx.android.synthetic.main.activity_pasajero_latitude.*
-import kotlinx.android.synthetic.main.activity_pasajero_maps.*
 
 class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
 
@@ -43,7 +39,6 @@ class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityPasajeroMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//TODO ESTOY GOBERNANDO ESTE CODIGO MUAJJAJAJAJA :D
 
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.Cmap) as SupportMapFragment
@@ -56,8 +51,6 @@ class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
         loadData()
         startLocationUpdates()
         destroyInfo()
-
-
 
 
     }
@@ -123,7 +116,6 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
                     loadData()
                     agregarMarcador(location.latitude,location.longitude)
                     loadUsers()
-
 
                 }
             }

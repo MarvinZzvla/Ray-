@@ -26,7 +26,6 @@ private lateinit var locationCallback: LocationCallback
 //VARIABLES FOR MAKE SENSE APP
 private var myCoordenadas = Location("0")
 private var list = arrayListOf<DataSnapshot>()
-private var aceptarBtn = false
 private var isPedir = false;
 private var startApp = false
 
@@ -52,13 +51,13 @@ class PasajeroUsers : AppCompatActivity() {
         }
 
         if (!isPedir){
-            aceptarBtn = false
+
             isPedir = true
             requestBtn.text = "Cancelar"
 
         }else
         {
-            aceptarBtn = true
+
             isPedir = false
             requestBtn.text = "Pedir"
             stopLocationUpdates()
@@ -71,7 +70,7 @@ class PasajeroUsers : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         //Stop updates if the user change activity
-        aceptarBtn = false
+
     }
 
     /*
@@ -236,9 +235,8 @@ and add it to a list then display it
                 super.onLocationResult(p0)
                 p0 ?: return
 
-                if (p0.locations.isNotEmpty() &&!aceptarBtn) {
+                if (p0.locations.isNotEmpty()) {
                     var location = p0.lastLocation
-                    getLocationUpdates()
                     loadUsers()
                     loadData(location.latitude,location.longitude)
                     addDriverListLayout.removeAllViews()
@@ -285,7 +283,7 @@ and add it to a list then display it
     }
 
     fun stopLocationUpdates(){
-        aceptarBtn = true
+
         fusedLocationClient.removeLocationUpdates(locationCallback)
 
     }

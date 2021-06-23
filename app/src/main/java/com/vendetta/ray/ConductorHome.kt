@@ -45,12 +45,14 @@ class ConductorHome : AppCompatActivity() {
                 MakeToast("Enciende tu GPS e intenta nuevamente")
             }
 
+
         }
 
 
     }
     override fun onStart() {
         super.onStart()
+
         //Checkear si es un conductor y guardar last login
         isADriver()
     }
