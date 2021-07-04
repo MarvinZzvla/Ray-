@@ -87,7 +87,8 @@ class ConductorLogin : AppCompatActivity() {
                    }else{makeToast("No eres conductor")}
                 }catch (error:Error){makeToast(error.cause.toString())}
 
-            }.addOnFailureListener { makeToast("Verifica tu conexion a internet") }
+            }.addOnFailureListener { println("El problema esta aqui")
+                 makeToast("Verifica tu conexion a internet") }
         }
 
     }

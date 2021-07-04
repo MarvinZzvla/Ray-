@@ -39,9 +39,7 @@ class ConductorUsers : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_conductor_users)
 
-
     }
-
 
     override fun onStart() {
         super.onStart()
@@ -82,7 +80,7 @@ and add it to a list then display it
                         list.add(ds)
                     }
                 }
-                //Call myAdd
+                //Call myAddZZ
                 myAdd(list)
 
             }
@@ -164,7 +162,7 @@ and add it to a list then display it
             this.putExtra("uI",identificador)
             this.putExtra("name",name)
             this.putExtra("distancia",distancia)
-            destroyInfoNow()
+            //destroyInfoNow()
             //Start activity
             startActivity(this)
         }
@@ -248,6 +246,8 @@ y mandarlo a la lista de ConductorLooking
                 }
 
             }
+
+        //
     }
 
     /*
@@ -296,7 +296,7 @@ y mandarlo a la lista de ConductorLooking
         super.onPause()
 //        Intent(this,ConductorHome::class.java).apply { startActivity(this) }
         stopLocationUpdates()
-        destroyInfoNow()
+        //destroyInfoNow()
 
     }
 
@@ -308,5 +308,3 @@ y mandarlo a la lista de ConductorLooking
     }
 
 }
-
-

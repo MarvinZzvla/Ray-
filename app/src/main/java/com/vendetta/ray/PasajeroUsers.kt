@@ -44,6 +44,7 @@ class PasajeroUsers : AppCompatActivity() {
     }
 
 
+
     private fun requestBtnFun() {
         if(!startApp){
             startLocationUpdates()
@@ -69,6 +70,10 @@ class PasajeroUsers : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        isPedir = false;
+        startApp = false
+
+
         //Stop updates if the user change activity
 
     }
@@ -170,17 +175,23 @@ and add it to a list then display it
 
         //TODO If user click accepts button
         btn2.setOnClickListener {
-            //STOP REQUEST MAPS UPDATE
-            stopLocationUpdates()
-            //GO TO NEXT ACTIVITY
-            Intent(this,PasajeroMaps::class.java).apply {
-                //Mandar usuario, nombre y distancia
-                this.putExtra("uI",identificador)
-                this.putExtra("name",name)
-                this.putExtra("distancia",distancia)
-                destroyInfoNow()
-                //Start activity
-                startActivity(this)
+            Firebase.database.getReference("MyUsers").child(identificador).child("Coordenadas").get().addOnSuccessListener {
+
+                if(it.exists()) {
+                    //STOP REQUEST MAPS UPDATE
+                    stopLocationUpdates()
+                    //GO TO NEXT ACTIVITY
+                    Intent(this, PasajeroMaps::class.java).apply {
+                        //Mandar usuario, nombre y distancia
+                        this.putExtra("uI", identificador)
+                        this.putExtra("name", name)
+                        this.putExtra("distancia", distancia)
+                        destroyInfoNow()
+                        //Start activity
+                        startActivity(this)
+                    }
+                }else{MakeToast("Ha ocurrido un error vuelve intentarlo")
+                    onBackPressed()}
             }
         }
         //Agregar botonos al horizontal layout
@@ -283,7 +294,6 @@ and add it to a list then display it
     }
 
     fun stopLocationUpdates(){
-
         fusedLocationClient.removeLocationUpdates(locationCallback)
 
     }
@@ -292,7 +302,6 @@ and add it to a list then display it
         super.onPause()
         stopLocationUpdates()
         //destroyInfoNow()
-
     }
 
 
@@ -301,5 +310,9 @@ and add it to a list then display it
         stopLocationUpdates()
         destroyInfoNow()
     }
+
+    private fun MakeToast(text:String){
+        Toast.makeText(this,text, Toast.LENGTH_LONG).show()}
+
 
 }

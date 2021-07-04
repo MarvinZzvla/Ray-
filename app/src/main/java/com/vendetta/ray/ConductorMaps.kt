@@ -51,13 +51,14 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
         var name = intent.getStringExtra("name")?:""
         var identificador = intent.getStringExtra("uI")?:""
+       // var distancia = intent.getIntExtra("distancia")
 
         println("EL USUARIO ES: " + name.toString() + " - " + identificador.toString())
 
         getLocationUpdates()
         loadData()
         startLocationUpdates()
-        destroyInfo()
+       destroyInfo()
 
     }
 
@@ -79,18 +80,21 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
             var long = it.child("Coordenadas").child("longitude").value as Double
             var locationActual = LatLng(lat,long)
 
-            var database = Firebase.database.getReference("ConductorLooking").child(auth?.uid.toString())
+            var database = Firebase.database.getReference("Viajes").child(auth?.uid.toString())
             database.setValue(DataUser(name, apellido, locationActual))
         }
     }
 
     fun loadUsers(){
-        Firebase.database.getReference("PasajeroLooking").get().addOnSuccessListener {
+        var name = intent.getStringExtra("name")?:""
+        var identificador = intent.getStringExtra("uI")?:""
 
-            if(it.exists()) {
-                for (ds in it.children) {
-                    var lat = ds.child("locationActual").child("latitude").getValue()
-                    var long = ds.child("locationActual").child("longitude").getValue()
+        Firebase.database.getReference("MyUsers").child(identificador).get().addOnSuccessListener {
+
+
+                    var lat = it.child("Coordenadas").child("latitude").getValue()
+                    var long = it.child("Coordenadas").child("longitude").getValue()
+                    var coordenadas = LatLng(lat as Double, long as Double)
 
                     var location = Location("0").apply {
                         this.latitude = lat as Double
@@ -98,34 +102,12 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
                     }
                     var distancia = myCoordenadas.distanceTo(location).toInt()
 
-                    //Dectectar usuarios si estan a 1KM de distancia
-                    if(distancia <= 1000) {
-                        list.add(ds)
-                    }
-                }
-                myAdd(list)
-
-            }
+                mMap.addMarker(MarkerOptions().position(coordenadas).title(" $name $distancia Metros").icon(
+                BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_foreground)))
         }
 
-
     }
 
-    fun myAdd(user: ArrayList<DataSnapshot>){
-
-        for (user in list){
-    var lat = user.child("locationActual").child("latitude").getValue() as Double
-    var long = user.child("locationActual").child("longitude").getValue() as Double
-    var coordenadas = LatLng(lat,long)
-    var thisLocation = Location("0").apply {this.latitude = lat; this.longitude = long}
-    var distance = myCoordenadas.distanceTo(thisLocation).toInt()
-    var name = user.child("name").getValue() as String + " " + user.child("apellido").getValue() as String
-    mMap.addMarker(MarkerOptions().position(coordenadas).title(" $name $distance Metros").icon(
-        BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_foreground)))
-}
-        list.clear()
-
-    }
 
 
     fun destroyInfo(){ Firebase.database.getReference("ConductorLooking").child(Firebase.auth?.uid.toString()).apply {this.onDisconnect().removeValue()}}

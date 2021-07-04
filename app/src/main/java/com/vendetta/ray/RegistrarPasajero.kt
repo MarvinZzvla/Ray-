@@ -60,8 +60,6 @@ fun readData(){
      val database = Firebase.database
         val list = arrayListOf<String>()
 
-
-
     database.getReference("Cities").addValueEventListener(object :ValueEventListener{
         override fun onDataChange(snapshot: DataSnapshot) {
             list.clear()

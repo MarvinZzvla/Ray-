@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
@@ -75,11 +76,11 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
     fun loadUsers() {
         var name = intent.getStringExtra("name") ?: ""
         var identificador = intent.getStringExtra("uI") ?: ""
-
+        println("Este es el : " + identificador)
 
         Firebase.database.getReference("MyUsers").child(identificador).child("Coordenadas").get().addOnSuccessListener {
 
-            if (it != null) {
+            if (it.exists()) {
                 var lat = it.child("latitude").getValue()
                 var long = it.child("longitude").getValue()
                 println("AQUI LA LATITUD: " + lat)
@@ -87,7 +88,7 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
                 var coordenadas = LatLng(lat as Double, long as Double)
                 mMap.addMarker(MarkerOptions().position(coordenadas).title(name).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_foreground)))
 
-            }
+            }else{MakeToast("Ha ocurrido un error vuelve abrir la aplicacion")}
         }
     }
 
@@ -198,5 +199,7 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
         mMap = google
     }
 
+    private fun MakeToast(text:String){
+        Toast.makeText(this,text, Toast.LENGTH_LONG).show()}
 
 }
