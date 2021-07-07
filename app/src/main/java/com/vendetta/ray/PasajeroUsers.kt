@@ -87,41 +87,38 @@ and add it to a list then display it
     fun loadUsers(){
 var auth = Firebase.auth.currentUser
         println("Aqui estoy")
-        Firebase.database.getReference("PasajeroLooking").child(auth?.uid.toString()).child("Peticiones").get().addOnSuccessListener {
 
-            if(it.exists())
-            {
+        //Get Pasajeros Looking
+        Firebase.database.getReference("PasajeroLooking").child(auth?.uid.toString()).child("Peticiones").get().addOnSuccessListener {
+            //Si existe
+            if (it.exists()) {
+                //Obtener de cada usuario su localizacion
                 for (user in it.children) {
-                    println("Este es el identificador" + user.key.toString())
+                    println("La Clave es " + user.key)
+                    Firebase.database.getReference("ConductorLooking").child(user.key.toString())
+                        .get().addOnSuccessListener {
+                                var lat = it.child("locationActual").child("latitude").getValue()
+                                var long =
+                                    it.child("locationActual").child("longitude").getValue()
+
+                                var location = Location("0").apply {
+                                    this.latitude = lat as Double
+                                    this.longitude = long as Double
+                                }
+                                //Obtener distancia
+                                var distancia = myCoordenadas.distanceTo(location).toInt()
+
+                                //Dectectar usuarios si estan a 1KM de distancia
+                                if (distancia <= 1000) {
+                                    list.add(it)
+                                }
                 }
+                //Call myAdd
+                myAdd(list)
+
             }
         }
-        //Get Pasajeros Looking
-//        Firebase.database.getReference("ConductorLooking").get().addOnSuccessListener {
-//            //Si existe
-//            if(it.exists()) {
-//                //Obtener de cada usuario su localizacion
-//                for (ds in it.children) {
-//                    var lat = ds.child("locationActual").child("latitude").getValue()
-//                    var long = ds.child("locationActual").child("longitude").getValue()
-//
-//                    var location = Location("0").apply {
-//                        this.latitude = lat as Double
-//                        this.longitude = long as Double
-//                    }
-//                    //Obtener distancia
-//                    var distancia = myCoordenadas.distanceTo(location).toInt()
-//
-//                    //Dectectar usuarios si estan a 1KM de distancia
-//                    if(distancia <= 1000) {
-//                        list.add(ds)
-//                    }
-//                }
-//                //Call myAdd
-//                myAdd(list)
-//
-//            }
-//        }
+        }
 
 
     }
