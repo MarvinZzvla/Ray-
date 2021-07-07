@@ -28,6 +28,7 @@ private var myCoordenadas = Location("0")
 private var list = arrayListOf<DataSnapshot>()
 private var isPedir = false;
 private var startApp = false
+private var fisrtTime = true
 
 
 class PasajeroUsers : AppCompatActivity() {
@@ -84,32 +85,43 @@ Find users around 1km of us
 and add it to a list then display it
  */
     fun loadUsers(){
-        //Get Pasajeros Looking
-        Firebase.database.getReference("ConductorLooking").get().addOnSuccessListener {
-            //Si existe
-            if(it.exists()) {
-                //Obtener de cada usuario su localizacion
-                for (ds in it.children) {
-                    var lat = ds.child("locationActual").child("latitude").getValue()
-                    var long = ds.child("locationActual").child("longitude").getValue()
+var auth = Firebase.auth.currentUser
+        println("Aqui estoy")
+        Firebase.database.getReference("PasajeroLooking").child(auth?.uid.toString()).child("Peticiones").get().addOnSuccessListener {
 
-                    var location = Location("0").apply {
-                        this.latitude = lat as Double
-                        this.longitude = long as Double
-                    }
-                    //Obtener distancia
-                    var distancia = myCoordenadas.distanceTo(location).toInt()
-
-                    //Dectectar usuarios si estan a 1KM de distancia
-                    if(distancia <= 1000) {
-                        list.add(ds)
-                    }
+            if(it.exists())
+            {
+                for (user in it.children) {
+                    println("Este es el identificador" + user.key.toString())
                 }
-                //Call myAdd
-                myAdd(list)
-
             }
         }
+        //Get Pasajeros Looking
+//        Firebase.database.getReference("ConductorLooking").get().addOnSuccessListener {
+//            //Si existe
+//            if(it.exists()) {
+//                //Obtener de cada usuario su localizacion
+//                for (ds in it.children) {
+//                    var lat = ds.child("locationActual").child("latitude").getValue()
+//                    var long = ds.child("locationActual").child("longitude").getValue()
+//
+//                    var location = Location("0").apply {
+//                        this.latitude = lat as Double
+//                        this.longitude = long as Double
+//                    }
+//                    //Obtener distancia
+//                    var distancia = myCoordenadas.distanceTo(location).toInt()
+//
+//                    //Dectectar usuarios si estan a 1KM de distancia
+//                    if(distancia <= 1000) {
+//                        list.add(ds)
+//                    }
+//                }
+//                //Call myAdd
+//                myAdd(list)
+//
+//            }
+//        }
 
 
     }
@@ -212,8 +224,7 @@ and add it to a list then display it
         myCoordenadas.latitude = lat
         myCoordenadas.longitude= long
         val auth = Firebase.auth.currentUser
-        var database = Firebase.database.getReference("MyUsers").child(auth?.uid.toString()).child("Coordenadas")
-        database.setValue(coordenadas)
+        Firebase.database.getReference("MyUsers").child(auth?.uid.toString()).child("Coordenadas").setValue(coordenadas)
 
 
         Firebase.database.getReference("MyUsers").child(auth?.uid.toString()).get().addOnSuccessListener {
@@ -224,7 +235,16 @@ and add it to a list then display it
             var locationActual = LatLng(lat,long)
 
             var database = Firebase.database.getReference("PasajeroLooking").child(auth?.uid.toString())
-            database.setValue(DataUser(name, apellido, locationActual))
+
+            if(fisrtTime){
+                database.setValue(DataUser(name, apellido, locationActual))
+                fisrtTime = false
+            } else{
+                database.child("locationActual").setValue(locationActual)
+            }
+
+
+
         }
     }
 

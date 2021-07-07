@@ -164,7 +164,7 @@ and add it to a list then display it
             this.putExtra("distancia",distancia)
             //destroyInfoNow()
             //Start activity
-            startActivity(this)
+            //startActivity(this)
         }
     }
 
