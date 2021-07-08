@@ -62,7 +62,9 @@ class ActivityTest : AppCompatActivity() {
             }
         }
     }
-
+/*
+ESTA ES LA PRUEBA DE QUE FUNCIONO
+*/
     fun configRequest(){
         client = FusedLocationProviderClient(this)
         myRequest = LocationRequest().apply {
