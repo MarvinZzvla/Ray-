@@ -10,6 +10,7 @@ import android.widget.*
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ktx.database
@@ -53,9 +54,10 @@ class PasajeroUsers : AppCompatActivity() {
         }
 
         if (!isPedir){
-
+            fisrtTime = true
             isPedir = true
             requestBtn.text = "Cancelar"
+            startLocationUpdates()
 
         }else
         {
@@ -71,6 +73,8 @@ class PasajeroUsers : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        getLocationUpdates()
+        fisrtTime = true
         isPedir = false;
         startApp = false
 
@@ -184,9 +188,7 @@ var auth = Firebase.auth.currentUser
 
         //TODO If user click accepts button
         btn2.setOnClickListener {
-            Firebase.database.getReference("MyUsers").child(identificador).child("Coordenadas").get().addOnSuccessListener {
-
-                if(it.exists()) {
+                    Firebase.database.getReference("PasajeroLooking").child(Firebase.auth.currentUser?.uid.toString()).child("Peticiones").child(identificador).child("acepto").setValue(true)
                     //STOP REQUEST MAPS UPDATE
                     stopLocationUpdates()
                     //GO TO NEXT ACTIVITY
@@ -199,9 +201,8 @@ var auth = Firebase.auth.currentUser
                         //Start activity
                         startActivity(this)
                     }
-                }else{MakeToast("Ha ocurrido un error vuelve intentarlo")
-                    onBackPressed()}
-            }
+
+
         }
         //Agregar botonos al horizontal layout
         horizontalLayout.addView(btn1)
@@ -279,7 +280,7 @@ var auth = Firebase.auth.currentUser
      */
 
     fun startLocationUpdates(){
-        getLocationUpdates()
+
 
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -325,7 +326,7 @@ var auth = Firebase.auth.currentUser
     override fun onBackPressed() {
         super.onBackPressed()
         stopLocationUpdates()
-        destroyInfoNow()
+        //destroyInfoNow()
     }
 
     private fun MakeToast(text:String){

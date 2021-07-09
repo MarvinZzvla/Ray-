@@ -2,12 +2,12 @@ package com.vendetta.ray
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
-import android.os.Looper
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -18,6 +18,8 @@ import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_conductor_users.*
@@ -98,6 +100,13 @@ and add it to a list then display it
     fun myAdd(user: ArrayList<DataSnapshot>){
 
         for (user in list){
+            var status = true
+            if(user.hasChild("Peticiones"))
+            {
+               status = false
+            }
+
+
             var lat = user.child("locationActual").child("latitude").getValue() as Double
             var long = user.child("locationActual").child("longitude").getValue() as Double
             var coordenadas = LatLng(lat,long)
@@ -105,7 +114,7 @@ and add it to a list then display it
             var distance = myCoordenadas.distanceTo(thisLocation).toInt()
             var name = user.child("name").getValue() as String + " " + user.child("apellido").getValue() as String
             var uI = user.key.toString()
-            displayUsers(name,distance,uI)
+            displayUsers(name,distance,uI,status)
 
         }
         list.clear()
@@ -118,8 +127,7 @@ and add it to a list then display it
 
      */
 
-     fun displayUsers(name:String,distancia:Int,identificador:String) {
-
+     fun displayUsers(name: String, distancia: Int, identificador: String, status: Boolean) {
             //TODO CREATE Textview para el nombre
              var myName = TextView(this)
              myName.text = name
@@ -140,11 +148,22 @@ and add it to a list then display it
              var btn2 = Button(this)
              btn1.text = "Rechazar"
              btn2.text = "Aceptar"
+             if(!status){
+                 btn2.text = "...Esperando"
+             }
+
 
 
          //TODO If user click accepts button
             btn2.setOnClickListener {
-                aceptarFunction(name,distancia,identificador)
+                if(status && btn2.text == "Aceptar")
+                {
+                    btn2.text = "...Esperando"
+                    aceptarFunction(name,distancia,identificador)
+                }else{
+                    MakeToast("Aguarde porfavor")
+                }
+
 
             }
          //Agregar botonos al horizontal layout
@@ -154,18 +173,36 @@ and add it to a list then display it
 
     private fun aceptarFunction(name:String,distancia:Int,identificador:String) {
 
+
+
         Firebase.database.getReference("PasajeroLooking").child(identificador).child("Peticiones").child(Firebase.auth.currentUser?.uid.toString()).setValue(myName)
+        Firebase.database.getReference("PasajeroLooking").child(identificador).child("Peticiones").child(Firebase.auth.currentUser?.uid.toString()).child("acepto").setValue(false)
         Firebase.database.getReference("PasajeroLooking").child(identificador).child("Peticiones").child(Firebase.auth.currentUser?.uid.toString()).onDisconnect().removeValue()
         //GO TO NEXT ACTIVITY
-        Intent(this,ConductorMaps::class.java).apply {
-            //Mandar usuario, nombre y distancia
-            this.putExtra("uI",identificador)
-            this.putExtra("name",name)
-            this.putExtra("distancia",distancia)
-            //destroyInfoNow()
-            //Start activity
-            //startActivity(this)
-        }
+
+        Firebase.database.getReference("PasajeroLooking").child(identificador).child("Peticiones").child(Firebase.auth.currentUser?.uid.toString()).child("acepto").addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(aceptar: DataSnapshot) {
+                if(aceptar.value == true)
+                {
+                println("El usuario ha aceptado")
+                        Intent(applicationContext,ConductorMaps::class.java).apply {
+                        //Mandar usuario, nombre y distancia
+                        this.putExtra("uI",identificador)
+                        this.putExtra("name",name)
+                        this.putExtra("distancia",distancia)
+                            destroyInfoNow()
+                            //Start activity
+                            startActivity(this)
+                }
+                    }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
+
     }
 
     //DATA USER FORMAT TO SEND TO FIREBASE
