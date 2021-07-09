@@ -25,6 +25,10 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_conductor_users.*
 
 
+/*
+ESTA ES UNA PRUEBA TEST QUE DEBERIA APARECER SOLO EN ESTA BRANCH
+ */
+
 //VARIABLES FOR CHECK TIME AND DETAILS OF CALLBACK FUNCTION
 @SuppressLint("StaticFieldLeak")
 private lateinit var fusedLocationClient : FusedLocationProviderClient
