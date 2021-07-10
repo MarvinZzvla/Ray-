@@ -108,7 +108,7 @@ LAST LOGIN SAVE
                 }catch (error:Error){
                     Log.w("Fail",error.cause.toString())}
                 //Si falla verificar conexion a internet
-            }.addOnFailureListener { makeToast("Verifica tu conexion a internet") }
+            }
         }
     }
 /*

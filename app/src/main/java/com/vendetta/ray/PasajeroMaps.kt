@@ -30,10 +30,12 @@ class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
    private lateinit var locationRequest : LocationRequest
    private lateinit var locationCallback: LocationCallback
 
+   /*
+   TODO PROBAR LA APLICACION EN MODO PASAJERO PARA VERIFICAR SI NO HAY ERRORES CON EL MAPA
+   TODO Y DESPUES DE ESO HACER UN COMMIT PARA GUARDAR 
+    */
+
    var myCoordenadas = Location("0")
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -73,20 +75,37 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
     }
     }
 
-    fun loadUsers() {
+    fun loadUsers(myLat: Double, myLong: Double) {
         var name = intent.getStringExtra("name") ?: ""
         var identificador = intent.getStringExtra("uI") ?: ""
-        println("Este es el : " + identificador)
+        var thisCoordenadas = LatLng(myLat,myLong)
 
         Firebase.database.getReference("MyUsers").child(identificador).child("Coordenadas").get().addOnSuccessListener {
 
             if (it.exists()) {
-                var lat = it.child("latitude").getValue()
-                var long = it.child("longitude").getValue()
-                println("AQUI LA LATITUD: " + lat)
-                println("AQUI LA Longitud: " + long)
+                var lat = it.child("latitude").value
+                var long = it.child("longitude").value
                 var coordenadas = LatLng(lat as Double, long as Double)
-                mMap.addMarker(MarkerOptions().position(coordenadas).title(name).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_foreground)))
+
+                var location = Location("0").apply {
+                    this.latitude = lat as Double
+                    this.longitude = long as Double
+                }
+                var distancia = myCoordenadas.distanceTo(location).toInt()
+                mMap.clear()
+
+                //Conductor Marcador en el mapa
+                mMap.addMarker(MarkerOptions().position(coordenadas).title(" $name $distancia Metros").icon(
+                    BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_foreground)))
+
+                //Nosotros marcador en el mapa
+                mMap.addMarker(MarkerOptions().position(thisCoordenadas).title("Zavala Aqui").icon(
+                    BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_foreground)))
+
+                var zoom = 16.5F
+                if(mMap.cameraPosition.zoom >= 16.5F){
+                    zoom = mMap.cameraPosition.zoom}
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(thisCoordenadas,zoom))
 
             }else{MakeToast("Ha ocurrido un error vuelve abrir la aplicacion")}
         }
@@ -113,10 +132,10 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
 
                 if (p0.locations.isNotEmpty()) {
                     var location = p0.lastLocation
-                    mMap.clear()
+                    loadUsers(location.latitude,location.longitude)
                     loadData()
                     agregarMarcador(location.latitude,location.longitude)
-                    loadUsers()
+
 
                 }
             }
@@ -135,8 +154,8 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
         var database = Firebase.database.getReference("MyUsers").child(auth?.uid.toString()).child("Coordenadas")
         database.setValue(coordenadas)
 
-        mMap.addMarker(MarkerOptions().position(coordenadas).title("Zavala Aqui").icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_foreground)))
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordenadas,16F))
+//        mMap.addMarker(MarkerOptions().position(coordenadas).title("Zavala Aqui").icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_foreground)))
+//        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordenadas,16F))
     }
 
 
@@ -197,6 +216,8 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
 
     override fun onMapReady(google: GoogleMap) {
         mMap = google
+        var thisCoordenadas = LatLng(11.915555,-86.143940)
+        google.animateCamera(CameraUpdateFactory.newLatLngZoom(thisCoordenadas,8F))
     }
 
     private fun MakeToast(text:String){

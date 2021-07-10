@@ -25,7 +25,6 @@ import com.vendetta.ray.databinding.ActivityConductorMapsBinding
 class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
-
     private lateinit var binding: ActivityConductorMapsBinding
 
     private lateinit var fusedLocationClient : FusedLocationProviderClient
@@ -231,6 +230,8 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(google: GoogleMap) {
         mMap = google
+        var thisCoordenadas = LatLng(11.915555,-86.143940)
+        google.animateCamera(CameraUpdateFactory.newLatLngZoom(thisCoordenadas,8F))
 
     }
 
