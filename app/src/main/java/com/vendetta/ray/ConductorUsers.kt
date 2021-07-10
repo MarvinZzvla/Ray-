@@ -1,8 +1,9 @@
+@file:Suppress("SpellCheckingInspection")
+
 package com.vendetta.ray
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -71,8 +72,8 @@ and add it to a list then display it
             if(it.exists()) {
                 //Obtener de cada usuario su localizacion
                 for (ds in it.children) {
-                    var lat = ds.child("locationActual").child("latitude").getValue()
-                    var long = ds.child("locationActual").child("longitude").getValue()
+                    var lat = ds.child("locationActual").child("latitude").value
+                    var long = ds.child("locationActual").child("longitude").value
 
                     var location = Location("0").apply {
                         this.latitude = lat as Double
@@ -87,7 +88,7 @@ and add it to a list then display it
                     }
                 }
                 //Call myAddZZ
-                myAdd(list)
+                myAdd()
 
             }
         }
@@ -101,7 +102,7 @@ and add it to a list then display it
     Y mostrarlo en pantalla
     Despues de haber mostrados todos borrar lista y obtener una actualizada
      */
-    fun myAdd(user: ArrayList<DataSnapshot>){
+    fun myAdd() {
 
         for (user in list){
             var status = true
@@ -111,12 +112,11 @@ and add it to a list then display it
             }
 
 
-            var lat = user.child("locationActual").child("latitude").getValue() as Double
-            var long = user.child("locationActual").child("longitude").getValue() as Double
-            var coordenadas = LatLng(lat,long)
+            var lat = user.child("locationActual").child("latitude").value as Double
+            var long = user.child("locationActual").child("longitude").value as Double
             var thisLocation = Location("0").apply {this.latitude = lat; this.longitude = long}
             var distance = myCoordenadas.distanceTo(thisLocation).toInt()
-            var name = user.child("name").getValue() as String + " " + user.child("apellido").getValue() as String
+            var name = user.child("name").value as String + " " + user.child("apellido").value as String
             var uI = user.key.toString()
             displayUsers(name,distance,uI,status)
 
@@ -275,7 +275,6 @@ y mandarlo a la lista de ConductorLooking
 
                 override fun onLocationResult(p0: LocationResult) {
                     super.onLocationResult(p0)
-                    p0 ?: return
                     if (p0.locations.isNotEmpty()) {
                         var location = p0.lastLocation
                         isGpsOff()
@@ -308,14 +307,14 @@ y mandarlo a la lista de ConductorLooking
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),44)
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),44)
         }
         fusedLocationClient.requestLocationUpdates(locationRequest,locationCallback,null)
 
 
     }
-    fun destroyInfo(){ Firebase.database.getReference("ConductorLooking").child(Firebase.auth?.uid.toString()).apply {this.onDisconnect().removeValue()}}
-    fun destroyInfoNow(){ Firebase.database.getReference("ConductorLooking").child(Firebase.auth?.uid.toString()).apply {this.removeValue()} }
+    fun destroyInfo(){ Firebase.database.getReference("ConductorLooking").child(Firebase.auth.uid.toString()).apply {this.onDisconnect().removeValue()}}
+    fun destroyInfoNow(){ Firebase.database.getReference("ConductorLooking").child(Firebase.auth.uid.toString()).apply {this.removeValue()} }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,

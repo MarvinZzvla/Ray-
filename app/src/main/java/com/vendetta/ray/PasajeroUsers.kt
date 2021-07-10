@@ -1,21 +1,24 @@
+@file:Suppress("SpellCheckingInspection")
+
 package com.vendetta.ray
 
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.*
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.activity_conductor_users.*
 import kotlinx.android.synthetic.main.activity_conductor_users.addDriverListLayout
 import kotlinx.android.synthetic.main.activity_pasajero_users.*
 
@@ -27,7 +30,7 @@ private lateinit var locationCallback: LocationCallback
 //VARIABLES FOR MAKE SENSE APP
 private var myCoordenadas = Location("0")
 private var list = arrayListOf<DataSnapshot>()
-private var isPedir = false;
+private var isPedir = false
 private var startApp = false
 private var fisrtTime = true
 
@@ -75,7 +78,7 @@ class PasajeroUsers : AppCompatActivity() {
         super.onStart()
         getLocationUpdates()
         fisrtTime = true
-        isPedir = false;
+        isPedir = false
         startApp = false
 
 
@@ -118,7 +121,7 @@ var auth = Firebase.auth.currentUser
                                 }
                 }
                 //Call myAdd
-                myAdd(list)
+                myAdd()
 
             }
         }
@@ -133,12 +136,11 @@ var auth = Firebase.auth.currentUser
     Y mostrarlo en pantalla
     Despues de haber mostrados todos borrar lista y obtener una actualizada
      */
-    fun myAdd(user: ArrayList<DataSnapshot>){
+    fun myAdd(){
 
         for (user in list){
             var lat = user.child("locationActual").child("latitude").getValue() as Double
             var long = user.child("locationActual").child("longitude").getValue() as Double
-            var coordenadas = LatLng(lat,long)
             var thisLocation = Location("0").apply {this.latitude = lat; this.longitude = long}
             var distance = myCoordenadas.distanceTo(thisLocation).toInt()
             var name = user.child("name").getValue() as String + " " + user.child("apellido").getValue() as String

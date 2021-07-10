@@ -25,6 +25,7 @@ import com.vendetta.ray.databinding.ActivityConductorMapsBinding
 class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
+
     private lateinit var binding: ActivityConductorMapsBinding
 
     private lateinit var fusedLocationClient : FusedLocationProviderClient
@@ -53,7 +54,6 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
         var identificador = intent.getStringExtra("uI")?:""
        // var distancia = intent.getIntExtra("distancia")
 
-        println("EL USUARIO ES: " + name.toString() + " - " + identificador.toString())
 
         getLocationUpdates()
         loadData()
@@ -85,9 +85,10 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    fun loadUsers(){
+    fun loadUsers(myLat:Double,myLong:Double){
         var name = intent.getStringExtra("name")?:""
         var identificador = intent.getStringExtra("uI")?:""
+        var thisCoordenadas = LatLng(myLat,myLong)
 
         Firebase.database.getReference("MyUsers").child(identificador).get().addOnSuccessListener {
 
@@ -101,9 +102,19 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
                         this.longitude = long as Double
                     }
                     var distancia = myCoordenadas.distanceTo(location).toInt()
-
+                     mMap.clear()
+                    //Pasajero Marca
                 mMap.addMarker(MarkerOptions().position(coordenadas).title(" $name $distancia Metros").icon(
                 BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_foreground)))
+                    //Nosotros marca
+                mMap.addMarker(MarkerOptions().position(thisCoordenadas).title("Zavala Aqui").icon(
+                BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_foreground)))
+
+                var zoom = 16.5F
+                if(mMap.cameraPosition.zoom >= 16.5F){
+                zoom = mMap.cameraPosition.zoom}
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(thisCoordenadas,zoom))
+
         }
 
     }
@@ -133,8 +144,7 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
                 if (p0.locations.isNotEmpty()) {
                     var location = p0.lastLocation
-                    loadUsers()
-                    mMap.clear()
+                    loadUsers(location.latitude,location.longitude)
                     loadData()
                     agregarMarcador(location.latitude,location.longitude)
 
@@ -146,7 +156,6 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
     fun agregarMarcador(lat:Double, long:Double){
 
-
         var coordenadas = LatLng(lat,long)
         myCoordenadas.latitude = lat
         myCoordenadas.longitude= long
@@ -155,12 +164,13 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
         var database = Firebase.database.getReference("MyUsers").child(auth?.uid.toString()).child("Coordenadas")
         database.setValue(coordenadas)
 
-        mMap.addMarker(MarkerOptions().position(coordenadas).title("Zavala Aqui").icon(
-            BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_foreground)))
-        var zoom = 16.5F
-        if(mMap.cameraPosition.zoom >= 16.5F){
-         zoom = mMap.cameraPosition.zoom}
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordenadas,zoom))
+//        mMap.addMarker(MarkerOptions().position(coordenadas).title("Zavala Aqui").icon(
+//            BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_foreground)))
+
+//        var zoom = 16.5F
+//        if(mMap.cameraPosition.zoom >= 16.5F){
+//         zoom = mMap.cameraPosition.zoom}
+//        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordenadas,zoom))
 
 
     }
@@ -221,6 +231,7 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(google: GoogleMap) {
         mMap = google
+
     }
 
 
