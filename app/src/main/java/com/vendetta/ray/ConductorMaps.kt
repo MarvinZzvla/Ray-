@@ -21,6 +21,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.vendetta.ray.databinding.ActivityConductorMapsBinding
+import kotlinx.android.synthetic.main.activity_pasajero_maps.*
 
 class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
@@ -53,16 +54,18 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
         var identificador = intent.getStringExtra("uI")?:""
        // var distancia = intent.getIntExtra("distancia")
 
-
         getLocationUpdates()
         loadData()
         startLocationUpdates()
-       destroyInfo()
+        destroyInfo()
 
     }
 
     override fun onStart() {
         super.onStart()
+        cancelBtn.setOnClickListener {
+            onBackPressed()
+        }
     }
 
     data class DataUser(var name:String, var apellido:String, var locationActual:LatLng)
@@ -217,13 +220,13 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onPause() {
         super.onPause()
-        stopLocationUpdates()
+        //stopLocationUpdates()
 
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-        stopLocationUpdates()
+        //stopLocationUpdates()
         destroyInfoNow()
         Intent(this,ConductorHome::class.java).apply { startActivity(this) }
     }

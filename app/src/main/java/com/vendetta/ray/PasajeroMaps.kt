@@ -20,6 +20,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.vendetta.ray.databinding.ActivityPasajeroMapsBinding
+import kotlinx.android.synthetic.main.activity_pasajero_maps.*
 
 class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
 
@@ -30,10 +31,6 @@ class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
    private lateinit var locationRequest : LocationRequest
    private lateinit var locationCallback: LocationCallback
 
-   /*
-   TODO PROBAR LA APLICACION EN MODO PASAJERO PARA VERIFICAR SI NO HAY ERRORES CON EL MAPA
-   TODO Y DESPUES DE ESO HACER UN COMMIT PARA GUARDAR 
-    */
 
    var myCoordenadas = Location("0")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +53,13 @@ class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
         destroyInfo()
 
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+        cancelBtn.setOnClickListener {
+            onBackPressed()
+        }
     }
 
 data class dataUser(var name:String, var apellido:String, var locationActual:LatLng)
@@ -202,16 +206,17 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
 
     override fun onPause() {
         super.onPause()
-        stopLocationUpdates()
-        destroyInfoNow()
-        Intent(this,PasajeroHome::class.java).apply { startActivity(this) }
+        //stopLocationUpdates()
+       // destroyInfoNow()
+
 
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-        stopLocationUpdates()
+        //stopLocationUpdates()
         destroyInfoNow()
+        Intent(this,PasajeroHome::class.java).apply { startActivity(this) }
     }
 
     override fun onMapReady(google: GoogleMap) {
