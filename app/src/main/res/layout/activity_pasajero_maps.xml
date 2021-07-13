@@ -40,6 +40,15 @@
             android:layout_gravity="bottom|center_horizontal"
             android:alpha="0.6"
             android:text="Cancelar Corrida" />
+
+        <ImageButton
+            android:id="@+id/chatUserBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:background="@drawable/ic_chat"
+            app:srcCompat="@drawable/ic_chat" />
+
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

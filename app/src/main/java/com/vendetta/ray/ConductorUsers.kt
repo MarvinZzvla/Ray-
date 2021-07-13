@@ -50,7 +50,6 @@ class ConductorUsers : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        //Stop updates if the user change activity
         //Start request map every 5seg around 1KM
         startLocationUpdates()
         //When disconnect stop looking people and destroy info
@@ -72,6 +71,8 @@ and add it to a list then display it
             if(it.exists()) {
                 //Obtener de cada usuario su localizacion
                 for (ds in it.children) {
+                    var msg = ds.child("msg").value
+                    println("Este es el msg del usuario: " + msg)
                     var lat = ds.child("locationActual").child("latitude").value
                     var long = ds.child("locationActual").child("longitude").value
 
@@ -111,14 +112,14 @@ and add it to a list then display it
                status = false
             }
 
-
+            var msg = user.child("msg").value as String
             var lat = user.child("locationActual").child("latitude").value as Double
             var long = user.child("locationActual").child("longitude").value as Double
             var thisLocation = Location("0").apply {this.latitude = lat; this.longitude = long}
             var distance = myCoordenadas.distanceTo(thisLocation).toInt()
             var name = user.child("name").value as String + " " + user.child("apellido").value as String
             var uI = user.key.toString()
-            displayUsers(name,distance,uI,status)
+            displayUsers(name,distance,uI,status,msg)
 
         }
         list.clear()
@@ -130,12 +131,16 @@ and add it to a list then display it
     Crear Design de los usuarios que van a aparecer al usuario
 
      */
-
-     fun displayUsers(name: String, distancia: Int, identificador: String, status: Boolean) {
+     fun displayUsers(name: String, distancia: Int, identificador: String, status: Boolean,msg: String) {
             //TODO CREATE Textview para el nombre
              var myName = TextView(this)
              myName.text = name
              addDriverListLayout.addView(myName)
+
+            //TODO Create Textview para la ubicacion
+            var myMsg = TextView(this)
+            myMsg.text = "Localizacion: " + msg
+            addDriverListLayout.addView(myMsg)
 
             //TODO Create Textview for distance from user
              var myDistancia = TextView(this)
@@ -334,12 +339,11 @@ y mandarlo a la lista de ConductorLooking
 
     override fun onPause() {
         super.onPause()
-//        Intent(this,ConductorHome::class.java).apply { startActivity(this) }
+//      Intent(this,ConductorHome::class.java).apply { startActivity(this) }
         stopLocationUpdates()
         //destroyInfoNow()
 
     }
-
 
     override fun onBackPressed() {
         super.onBackPressed()

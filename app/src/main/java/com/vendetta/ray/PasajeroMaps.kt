@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -20,7 +21,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.vendetta.ray.databinding.ActivityPasajeroMapsBinding
+import kotlinx.android.synthetic.main.activity_conductor_maps.*
 import kotlinx.android.synthetic.main.activity_pasajero_maps.*
+import kotlinx.android.synthetic.main.activity_pasajero_maps.cancelBtn
 
 class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
 
@@ -46,6 +49,10 @@ class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
 
         title = "Mapa"
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        chatUserBtn.setOnClickListener {
+           MakeToast("Este es el chat Pasajero")
+        }
 
         getLocationUpdates()
         loadData()

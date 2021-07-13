@@ -32,6 +32,15 @@
             android:layout_width="match_parent"
             android:layout_height="8dp" />
 
+        <EditText
+            android:id="@+id/msgUbicacion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:gravity="clip_vertical|center_horizontal"
+            android:hint="¿Donde estas?"
+            android:inputType="textPostalAddress" />
+
         <Button
             android:id="@+id/requestBtn"
             android:layout_width="wrap_content"

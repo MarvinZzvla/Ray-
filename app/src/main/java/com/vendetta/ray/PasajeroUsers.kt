@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -33,6 +34,7 @@ private var list = arrayListOf<DataSnapshot>()
 private var isPedir = false
 private var startApp = false
 private var fisrtTime = true
+private var msgUsuarioUbicacion = ""
 
 
 class PasajeroUsers : AppCompatActivity() {
@@ -41,13 +43,7 @@ class PasajeroUsers : AppCompatActivity() {
         setContentView(R.layout.activity_pasajero_users)
 
         destroyInfo()
-
-        requestBtn.setOnClickListener {
-            requestBtnFun()
-        }
-
     }
-
 
 
     private fun requestBtnFun() {
@@ -76,6 +72,16 @@ class PasajeroUsers : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+
+
+        requestBtn.setOnClickListener {
+            if(msgUbicacion.text.isNotEmpty()) {
+                msgUbicacion.visibility= View.INVISIBLE
+                msgUsuarioUbicacion = msgUbicacion.text.toString()
+                requestBtnFun()
+            }else{MakeToast("Por favor ingrese detalles de su ubicacion")}
+        }
+
         getLocationUpdates()
         fisrtTime = true
         isPedir = false
@@ -212,7 +218,7 @@ var auth = Firebase.auth.currentUser
     }
 
     //DATA USER FORMAT TO SEND TO FIREBASE
-    data class DataUser(var name:String, var apellido:String, var locationActual: LatLng)
+    data class DataUser(var name:String, var apellido:String, var locationActual: LatLng,var msg: String)
     /*
     LOAD DATA
     Update localizacion del usuario
@@ -237,7 +243,7 @@ var auth = Firebase.auth.currentUser
             var database = Firebase.database.getReference("PasajeroLooking").child(auth?.uid.toString())
 
             if(fisrtTime){
-                database.setValue(DataUser(name, apellido, locationActual))
+                database.setValue(DataUser(name, apellido, locationActual, msgUsuarioUbicacion))
                 fisrtTime = false
             } else{
                 database.child("locationActual").setValue(locationActual)

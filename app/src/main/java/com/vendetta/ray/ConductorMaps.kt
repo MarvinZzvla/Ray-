@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -21,7 +22,9 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.vendetta.ray.databinding.ActivityConductorMapsBinding
+import kotlinx.android.synthetic.main.activity_conductor_maps.*
 import kotlinx.android.synthetic.main.activity_pasajero_maps.*
+import kotlinx.android.synthetic.main.activity_pasajero_maps.cancelBtn
 
 class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
@@ -49,6 +52,15 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
         title = "Conductor"
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
+        chatDriverBtn.setOnClickListener {
+            if(chatScrollView.visibility == View.INVISIBLE)
+            {
+                chatScrollView.visibility = View.VISIBLE
+            }
+            else{
+                chatScrollView.visibility = View.INVISIBLE
+            }
+        }
 
         var name = intent.getStringExtra("name")?:""
         var identificador = intent.getStringExtra("uI")?:""

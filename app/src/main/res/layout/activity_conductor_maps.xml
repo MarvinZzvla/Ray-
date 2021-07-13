@@ -23,6 +23,44 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:context=".ConductorMaps" />
 
+    <ScrollView
+        android:id="@+id/chatScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="200dp"
+        android:background="#FDFDFD"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <LinearLayout
+            android:id="@+id/ChatLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Hello world"
+                android:textColor="#020202"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -42,6 +80,14 @@
             android:layout_gravity="bottom|center_horizontal"
             android:alpha="0.6"
             android:text="Cancelar Corrida" />
+
+        <ImageButton
+            android:id="@+id/chatDriverBtn"
+            android:layout_width="60dp"
+            android:layout_height="53dp"
+            android:layout_gravity="bottom|end"
+            android:background="@drawable/ic_chat"
+            app:srcCompat="@drawable/ic_chat" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
