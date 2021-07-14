@@ -1,12 +1,14 @@
 package com.vendetta.ray
 
 import android.Manifest
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
@@ -76,11 +78,13 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
     override fun onStart() {
         super.onStart()
         cancelBtn.setOnClickListener {
-            onBackPressed()
+           cancelarRide()
         }
     }
 
     data class DataUser(var name:String, var apellido:String, var locationActual:LatLng)
+
+
 
     fun loadData()
     {
@@ -204,6 +208,24 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
         }
         fusedLocationClient.requestLocationUpdates(locationRequest,locationCallback,null)
 
+
+    }
+
+    fun cancelarRide(){
+        AlertDialog.Builder(this).apply {
+            this.setTitle("Cancelar Viaje?")
+            this.setMessage("Se te aplicara un pequeña tarifa por esta accion.\nEstas seguro?")
+
+            this.setPositiveButton("Si,Cancelar",DialogInterface.OnClickListener { dialog, which ->
+                //TODO Aqui cuando el usuario acepta cancelar viaje
+                onBackPressed()
+            })
+
+            this.setNegativeButton("No, Continuar viaje", DialogInterface.OnClickListener { dialog, which ->
+                //TODO NO OCURRE NADA
+            })
+            this.show()
+        }
 
     }
 

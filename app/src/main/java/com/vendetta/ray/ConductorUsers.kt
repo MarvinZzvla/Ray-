@@ -263,8 +263,8 @@ y mandarlo a la lista de ConductorLooking
     private fun requestSetting(){
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationRequest = LocationRequest()
-        locationRequest.interval = 5000
-        locationRequest.fastestInterval = 5000
+        locationRequest.interval = 1000
+        locationRequest.fastestInterval = 1000
         // locationRequest.smallestDisplacement = 170f
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
     }

@@ -18,6 +18,8 @@ import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_conductor_users.addDriverListLayout
@@ -79,10 +81,12 @@ class PasajeroUsers : AppCompatActivity() {
                 msgUbicacion.visibility= View.INVISIBLE
                 msgUsuarioUbicacion = msgUbicacion.text.toString()
                 requestBtnFun()
+
             }else{MakeToast("Por favor ingrese detalles de su ubicacion")}
         }
 
         getLocationUpdates()
+
         fisrtTime = true
         isPedir = false
         startApp = false
@@ -99,7 +103,6 @@ and add it to a list then display it
  */
     fun loadUsers(){
 var auth = Firebase.auth.currentUser
-        println("Aqui estoy")
 
         //Get Pasajeros Looking
         Firebase.database.getReference("PasajeroLooking").child(auth?.uid.toString()).child("Peticiones").get().addOnSuccessListener {
@@ -107,31 +110,30 @@ var auth = Firebase.auth.currentUser
             if (it.exists()) {
                 //Obtener de cada usuario su localizacion
                 for (user in it.children) {
-                    println("La Clave es " + user.key)
                     Firebase.database.getReference("ConductorLooking").child(user.key.toString())
                         .get().addOnSuccessListener {
-                                var lat = it.child("locationActual").child("latitude").getValue()
-                                var long =
-                                    it.child("locationActual").child("longitude").getValue()
+                            var lat = it.child("locationActual").child("latitude").getValue()
+                            var long =
+                                it.child("locationActual").child("longitude").getValue()
 
-                                var location = Location("0").apply {
-                                    this.latitude = lat as Double
-                                    this.longitude = long as Double
-                                }
-                                //Obtener distancia
-                                var distancia = myCoordenadas.distanceTo(location).toInt()
+                            var location = Location("0").apply {
+                                this.latitude = lat as Double
+                                this.longitude = long as Double
+                            }
+                            //Obtener distancia
+                            var distancia = myCoordenadas.distanceTo(location).toInt()
 
-                                //Dectectar usuarios si estan a 1KM de distancia
-                                if (distancia <= 1000) {
-                                    list.add(it)
-                                }
+                            //Dectectar usuarios si estan a 1KM de distancia
+                            if (distancia <= 1000) {
+                              list.add(it)
+                            }
+                        }
                 }
                 //Call myAdd
                 myAdd()
-
             }
         }
-        }
+
 
 
     }
@@ -249,8 +251,6 @@ var auth = Firebase.auth.currentUser
                 database.child("locationActual").setValue(locationActual)
             }
 
-
-
         }
     }
 
@@ -262,8 +262,8 @@ var auth = Firebase.auth.currentUser
     fun getLocationUpdates() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationRequest = LocationRequest()
-        locationRequest.interval = 5000
-        locationRequest.fastestInterval = 5000
+        locationRequest.interval = 3000
+        locationRequest.fastestInterval = 3000
         // locationRequest.smallestDisplacement = 170f
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         locationCallback = object : LocationCallback() {

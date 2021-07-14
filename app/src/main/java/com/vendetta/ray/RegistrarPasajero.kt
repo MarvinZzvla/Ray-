@@ -27,14 +27,14 @@ class RegistrarPasajero : AppCompatActivity(){
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
 
-    var registrarOk = true
-    var password: String = ""
-    var email=""
-    var choise = ""
-    var nameReg = ""
-    var apellido=""
-    var telefone= 0
-    var isConductor = false
+    private var registrarOk = true
+    private var password: String = ""
+    private var email=""
+    private var choise = ""
+    private var nameReg = ""
+    private var apellido=""
+    private var telefone= 0
+    private var isConductor = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
