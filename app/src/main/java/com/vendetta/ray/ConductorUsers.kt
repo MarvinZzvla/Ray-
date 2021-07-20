@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -58,6 +59,8 @@ class ConductorUsers : AppCompatActivity() {
     }
 
     private fun MakeToast(text:String){Toast.makeText(this,text,Toast.LENGTH_LONG).show()}
+
+
 
 /*
 LOAD USERS
@@ -152,6 +155,7 @@ and add it to a list then display it
              var horizontalLayout = LinearLayout(this)
              horizontalLayout.orientation = LinearLayout.HORIZONTAL
              addDriverListLayout.addView(horizontalLayout)
+
             //TODO Create buttons for accept or deny user
              var btn1 = Button(this)
              var btn2 = Button(this)
@@ -226,6 +230,7 @@ y mandarlo a la lista de ConductorLooking
             var coordenadas = LatLng(lat, long)
             myCoordenadas.latitude = lat
             myCoordenadas.longitude = long
+
             val auth = Firebase.auth.currentUser
             var database = Firebase.database.getReference("MyUsers").child(auth?.uid.toString())
                 .child("Coordenadas")

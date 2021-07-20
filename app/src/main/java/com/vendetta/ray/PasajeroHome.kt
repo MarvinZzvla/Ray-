@@ -43,6 +43,8 @@ class PasajeroHome : AppCompatActivity() {
             val i = Intent(this, PasajeroUsers::class.java)
             startActivity(i)}
 
+        loadMyData()
+
     }
     override fun onStart() {
         super.onStart()
@@ -71,6 +73,19 @@ class PasajeroHome : AppCompatActivity() {
         val auth = Firebase.auth
         val database = Firebase.database.reference
         database.child("MyUsers").child(auth.uid.toString()).child("Last_Login").setValue(date)
+    }
+
+
+    private fun loadMyData() {
+        Firebase.database.getReference("MyUsers").child(Firebase.auth.currentUser?.uid.toString()).get().addOnSuccessListener {
+            var name = it.child("name").value
+            var apellido = it.child("apellido").value
+
+            val prefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE).edit()
+            prefs.putString("name",name.toString())
+            prefs.putString("apellido",apellido.toString())
+            prefs.apply()
+        }
     }
 
 

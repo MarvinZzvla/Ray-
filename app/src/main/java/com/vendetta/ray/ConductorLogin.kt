@@ -28,6 +28,9 @@ class ConductorLogin : AppCompatActivity() {
         setContentView(R.layout.activity_conductor_login)
 
         title = "Conductor"
+
+
+
         //Boton Registrarse
         intentRegistrar_btn2.setOnClickListener {
             val registerIntent = Intent(this,RegistrarPasajero::class.java)

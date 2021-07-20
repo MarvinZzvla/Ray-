@@ -1,6 +1,7 @@
 package com.vendetta.ray
 
 import android.Manifest
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,6 +12,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -20,13 +23,19 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.vendetta.ray.databinding.ActivityConductorMapsBinding
+import com.vendetta.ray.myFolder.AdpaterMensajes
+import com.vendetta.ray.myFolder.Mensaje
 import kotlinx.android.synthetic.main.activity_conductor_maps.*
+import kotlinx.android.synthetic.main.activity_pasajero_latitude.*
 import kotlinx.android.synthetic.main.activity_pasajero_maps.*
 import kotlinx.android.synthetic.main.activity_pasajero_maps.cancelBtn
+import kotlinx.android.synthetic.main.card_view_mensaje.*
 
 class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
@@ -36,6 +45,8 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var fusedLocationClient : FusedLocationProviderClient
     private lateinit var locationRequest : LocationRequest
     private lateinit var locationCallback: LocationCallback
+    private var isFirstTime = true
+    var myName = ""
 
     private var myCoordenadas = Location("0")
     private var list = arrayListOf<DataSnapshot>()
@@ -43,6 +54,7 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
         binding = ActivityConductorMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -54,20 +66,18 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
         title = "Conductor"
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-        chatDriverBtn.setOnClickListener {
-            if(chatScrollView.visibility == View.INVISIBLE)
-            {
-                chatScrollView.visibility = View.VISIBLE
-            }
-            else{
-                chatScrollView.visibility = View.INVISIBLE
-            }
-        }
+        val prefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        myName = prefs.getString("name","Conductor").toString()
 
-        var name = intent.getStringExtra("name")?:""
+
+
+        var name = intent.getStringExtra("name")?:"Pasajero"
+        nameDriver.text = name
         var identificador = intent.getStringExtra("uI")?:""
        // var distancia = intent.getIntExtra("distancia")
 
+        enableChat() //Enable chat
+        setComponents()
         getLocationUpdates()
         loadData()
         startLocationUpdates()
@@ -75,9 +85,73 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
     }
 
+    private fun enableChat() {
+        chatBtnDriver.setOnClickListener {
+            if(chatLayoutDriver.visibility == View.GONE)
+            {
+                chatLayoutDriver.visibility = View.VISIBLE
+            }
+            else if (chatLayoutDriver.visibility == View.VISIBLE){
+                chatLayoutDriver.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun setComponents() {
+        var database = Firebase.database.getReference("Viajes").child(Firebase.auth.currentUser?.uid.toString()).child("Chat")
+        var fotoPerfil = userImage
+        var txtMensajes =textSendDriver
+        var nombre = nameDriver
+        var rvMensajes = rvChatDriver
+        var btnEnviar = sendBtnDriverChat
+        var adapter = AdpaterMensajes(this)
+        var l = LinearLayoutManager(this)
+        rvMensajes.layoutManager = l
+        rvMensajes.adapter = adapter
+
+        btnEnviar.setOnClickListener {
+
+            database.push().setValue(Mensaje(txtMensajes.text.toString(),myName,"","1","00:00"))
+            txtMensajes.setText("")
+        }
+        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                rvMensajes.scrollToPosition(adapter.itemCount - 1)
+            }
+        })
+
+        database.addChildEventListener(object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                //var m = snapshot.value as Mensaje
+                adapter.addMensaje(snapshot)
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
+
+
+    }
+
+
     override fun onStart() {
         super.onStart()
-        cancelBtn.setOnClickListener {
+        cancelBtnDriver.setOnClickListener {
            cancelarRide()
         }
     }
@@ -99,7 +173,14 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
             var locationActual = LatLng(lat,long)
 
             var database = Firebase.database.getReference("Viajes").child(auth?.uid.toString())
-            database.setValue(DataUser(name, apellido, locationActual))
+            if(isFirstTime){
+                isFirstTime = false
+                database.setValue(DataUser(name, apellido, locationActual))
+            }
+            else{
+                database.child("locationActual").setValue(locationActual)
+            }
+
         }
     }
 
@@ -261,8 +342,10 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
     override fun onBackPressed() {
         super.onBackPressed()
         //stopLocationUpdates()
+
         destroyInfoNow()
         Intent(this,ConductorHome::class.java).apply { startActivity(this) }
+
     }
 
     override fun onMapReady(google: GoogleMap) {

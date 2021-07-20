@@ -21,7 +21,7 @@ public class HolderMensajes extends RecyclerView.ViewHolder {
 
     public HolderMensajes(@NonNull @NotNull View itemView) {
         super(itemView);
-        nombre = (TextView) itemView.findViewById(R.id.mensajeMensaje);
+        nombre = (TextView) itemView.findViewById(R.id.nombreMensaje);
         mensaje = (TextView) itemView.findViewById(R.id.mensajeMensaje);
         hora = (TextView) itemView.findViewById(R.id.horaMensaje);
         fotoMensaje = (CircleImageView)itemView.findViewById(R.id.fotoPerfilMensaje);

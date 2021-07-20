@@ -7,7 +7,9 @@
     android:visibility="visible"
     tools:context=".ConductorMaps">
 
-
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <fragment
         android:id="@+id/Cmap"
         android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -23,71 +25,109 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:context=".ConductorMaps" />
 
-    <ScrollView
-        android:id="@+id/chatScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="200dp"
-        android:background="#FDFDFD"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-
         <LinearLayout
-            android:id="@+id/ChatLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:gravity="bottom|center"
+            android:padding="10sp"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/textView4"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Hello world"
-                android:textColor="#020202"
-                android:textSize="20sp" />
-
+                android:layout_weight="1"
+                android:gravity="center">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="0.5"
+                android:id="@+id/cancelBtnDriver"
+                android:text="Cancelar Corrida"
+                android:layout_gravity="bottom|center"/>
         </LinearLayout>
 
+            <ImageButton
+                android:id="@+id/chatBtnDriver"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:alpha="0.5"
+                android:src="@drawable/ic_chat"
+                android:background="#55FFFFFF" />
 
-    </ScrollView>
+        </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
-
-
-
-    <FrameLayout
+    <LinearLayout
+        android:id="@+id/chatLayoutDriver"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="550dp"
         android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
         android:layout_marginEnd="1dp"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/custom_retangle_white"
+        android:visibility="visible"
+        android:weightSum="1"
+        app:layout_constraintVertical_weight="1">
 
-        <Button
-            android:id="@+id/cancelBtn"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:alpha="0.6"
-            android:text="Cancelar Corrida" />
+            android:orientation="horizontal">
 
-        <ImageButton
-            android:id="@+id/chatDriverBtn"
-            android:layout_width="60dp"
-            android:layout_height="53dp"
-            android:layout_gravity="bottom|end"
-            android:background="@drawable/ic_chat"
-            app:srcCompat="@drawable/ic_chat" />
-    </FrameLayout>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/fotoPerfilDriver"
+                android:layout_width="50sp"
+                android:layout_height="50sp"
+                android:src="@mipmap/ic_launcher"
+                android:background="@drawable/custom_retangle" />
+
+            <TextView
+                android:id="@+id/nameDriver"
+            android:padding="10sp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Marvin"
+            android:textSize="21sp"
+            android:textColor="@color/black"
+            android:background="@drawable/custom_retangle"/>
+    </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/rvChatDriver"
+            android:layout_weight="1"
+            />
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+        <EditText
+            android:id="@+id/textSendDriver"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:hint="Escribe un texto"
+            android:layout_weight="1"
+            android:textColorHint="@android:color/tertiary_text_light"/>
+
+    <ImageButton
+        android:id="@+id/sendBtnDriverChat"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:src="@android:drawable/ic_menu_send"
+        android:background="@drawable/custom_retangle"
+        android:layout_gravity="center"/>
+</LinearLayout>
+    </LinearLayout>
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -22,6 +22,8 @@ class ConductorHome : AppCompatActivity() {
         //Set title to activity
         title = "Inicio - Conductor"
 
+        loadMyData()
+
 
         //CERRAR SESION BOTON
         signOut_conductor.setOnClickListener {
@@ -50,6 +52,19 @@ class ConductorHome : AppCompatActivity() {
 
 
     }
+
+    private fun loadMyData() {
+        Firebase.database.getReference("MyUsers").child(Firebase.auth.currentUser?.uid.toString()).get().addOnSuccessListener {
+            var name = it.child("name").value
+            var apellido = it.child("apellido").value
+
+            val prefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE).edit()
+            prefs.putString("name",name.toString())
+            prefs.putString("apellido",apellido.toString())
+            prefs.apply()
+        }
+    }
+
     override fun onStart() {
         super.onStart()
 
