@@ -5,50 +5,129 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:visibility="visible"
-    tools:context=".PasajeroMaps">
+    tools:context=".ConductorMaps">
 
-
-    <fragment
-        android:id="@+id/Cmap"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="match_parent">
+        <fragment
+            android:id="@+id/Cmap"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:context=".ConductorMaps" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom|center"
+            android:padding="10sp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.5"
+                    android:id="@+id/cancelBtnPasajero"
+                    android:text="Cancelar Corrida"
+                    android:layout_gravity="bottom|center"/>
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/chatBtnPasajero"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:alpha="0.5"
+                android:src="@drawable/ic_chat"
+                android:background="#55FFFFFF" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/chatLayoutPasajero"
+        android:layout_width="match_parent"
+        android:layout_height="550dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="1dp"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:context=".PasajeroMaps" />
+        android:background="@drawable/custom_retangle_white"
+        android:visibility="visible"
+        android:weightSum="1"
+        app:layout_constraintVertical_weight="1">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="1dp"
-        android:layout_marginEnd="1dp"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/cancelBtn"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:alpha="0.6"
-            android:text="Cancelar Corrida" />
+            android:orientation="horizontal">
 
-        <ImageButton
-            android:id="@+id/chatUserBtn"
-            android:layout_width="wrap_content"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/fotoPerfilPasajero"
+                android:layout_width="50sp"
+                android:layout_height="50sp"
+                android:src="@android:drawable/ic_lock_lock"
+                android:background="@drawable/custom_retangle" />
+
+            <TextView
+                android:id="@+id/namePasajero"
+                android:padding="10sp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Marvin"
+                android:textSize="21sp"
+                android:textColor="@color/black"
+                android:background="@drawable/custom_retangle"/>
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/rvChatPasajero"
+            android:layout_weight="1"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:background="@drawable/ic_chat"
-            app:srcCompat="@drawable/ic_chat" />
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/textSendPasajero"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:hint="Escribe un texto"
+                android:layout_weight="1"
+                android:textColorHint="@android:color/tertiary_text_light"/>
 
-    </FrameLayout>
+            <ImageButton
+                android:id="@+id/sendBtnPasajeroChat"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:src="@android:drawable/ic_menu_send"
+                android:background="@drawable/custom_retangle"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+    </LinearLayout>
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

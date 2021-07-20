@@ -34,7 +34,6 @@ import com.vendetta.ray.myFolder.Mensaje
 import kotlinx.android.synthetic.main.activity_conductor_maps.*
 import kotlinx.android.synthetic.main.activity_pasajero_latitude.*
 import kotlinx.android.synthetic.main.activity_pasajero_maps.*
-import kotlinx.android.synthetic.main.activity_pasajero_maps.cancelBtn
 import kotlinx.android.synthetic.main.card_view_mensaje.*
 
 class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
