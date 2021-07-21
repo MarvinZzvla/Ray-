@@ -5,6 +5,7 @@ import android.content.Intent
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -21,7 +22,6 @@ class ConductorHome : AppCompatActivity() {
         setContentView(R.layout.activity_conductor_home)
         //Set title to activity
         title = "Inicio - Conductor"
-
         loadMyData()
 
 

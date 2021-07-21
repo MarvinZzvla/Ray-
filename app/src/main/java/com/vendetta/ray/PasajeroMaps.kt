@@ -45,6 +45,7 @@ class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
    private lateinit var locationCallback: LocationCallback
     private var myName= ""
     private var identificador =""
+    private var isFirstMsg = true
 
     var myCoordenadas = Location("0")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,7 +74,7 @@ class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
         enableChat()//Activar chat
         setComponents()//Establece las cardview y las obtine del server
         getLocationUpdates()
-        loadData()
+       // loadData()
         startLocationUpdates()
         destroyInfo()
 
@@ -81,10 +82,10 @@ class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
-/*
-*******ENABLE CHAT******
-Activa el layout del chat y lo desactiva
- */
+    /*
+    *******ENABLE CHAT******
+    Activa el layout del chat y lo desactiva
+     */
     private fun enableChat() {
         chatBtnPasajero.setOnClickListener {
             if(chatLayoutPasajero.visibility == View.GONE)
@@ -95,6 +96,17 @@ Activa el layout del chat y lo desactiva
                 chatLayoutPasajero.visibility = View.GONE
             }
         }
+
+    closeBtnPasajeroChat.setOnClickListener {
+        if(chatLayoutPasajero.visibility == View.GONE)
+        {
+            chatLayoutPasajero.visibility = View.VISIBLE
+        }
+        else if (chatLayoutPasajero.visibility == View.VISIBLE){
+            chatLayoutPasajero.visibility = View.GONE
+        }
+    }
+
     }
 
     /*
@@ -165,7 +177,9 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
 
 
     fun destroyInfo(){ Firebase.database.getReference("PasajeroLooking").child(Firebase.auth?.uid.toString()).apply {this.onDisconnect().removeValue()}}
-    fun destroyInfoNow(){ Firebase.database.getReference("PasajeroLooking").child(Firebase.auth?.uid.toString()).apply {this.removeValue()} }
+    fun destroyInfoNow(){
+        Firebase.database.getReference("Viajes").child(identificador).apply {this.removeValue()}
+    }
 
 
     @Suppress("DEPRECATION")
@@ -185,7 +199,7 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
                 if (p0.locations.isNotEmpty()) {
                     var location = p0.lastLocation
                     loadUsers(location.latitude,location.longitude)
-                    loadData()
+                    //loadData()
                     agregarMarcador(location.latitude,location.longitude)
 
 
@@ -236,7 +250,9 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
 
             this.setPositiveButton("Si,Cancelar", DialogInterface.OnClickListener { dialog, which ->
                 //TODO Aqui cuando el usuario acepta cancelar viaje
-                onBackPressed()
+               stopLocationUpdates()
+                destroyInfoNow()
+                Intent(applicationContext, PasajeroHome::class.java).apply { startActivity(this) }
             })
 
             this.setNegativeButton("No, Continuar viaje", DialogInterface.OnClickListener { dialog, which ->
@@ -260,8 +276,8 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
         rvMensajes.adapter = adapter
 
         btnEnviar.setOnClickListener {
-
-            database.push().setValue(Mensaje(txtMensajes.text.toString(),myName,"","1","00:00"))
+            var time = java.util.Calendar.getInstance().time.hours.toString()+":"+java.util.Calendar.getInstance().time.minutes.toString()
+            database.push().setValue(Mensaje(txtMensajes.text.toString(),myName,"","1",time))
             txtMensajes.setText("")
         }
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -282,7 +298,14 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
-
+                if(isFirstMsg) {
+                    stopLocationUpdates()
+                    MakeToast("El conductor ha cancelado el viaje :c")
+                    Intent(
+                        applicationContext,
+                        PasajeroHome::class.java
+                    ).apply { startActivity(this) }
+                }
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
@@ -330,10 +353,14 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        //stopLocationUpdates()
-        destroyInfoNow()
-        Intent(this,PasajeroHome::class.java).apply { startActivity(this) }
+        //super.onBackPressed()
+       if(chatLayoutPasajero.visibility == View.VISIBLE)
+       {
+           chatLayoutPasajero.visibility = View.GONE
+       }
+        else if(chatLayoutPasajero.visibility == View.GONE){
+            cancelarRide()
+       }
     }
 
     override fun onMapReady(google: GoogleMap) {

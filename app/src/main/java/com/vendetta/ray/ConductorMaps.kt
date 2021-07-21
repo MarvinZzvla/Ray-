@@ -45,6 +45,7 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var locationRequest : LocationRequest
     private lateinit var locationCallback: LocationCallback
     private var isFirstTime = true
+    private var FirstMsg = true
     var myName = ""
 
     private var myCoordenadas = Location("0")
@@ -77,15 +78,33 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
         enableChat() //Enable chat
         setComponents()
+        defaultMsgChat()
         getLocationUpdates()
-        loadData()
+        //loadData()
         startLocationUpdates()
         destroyInfo()
 
+
+
+    }
+
+    private fun defaultMsgChat() {
+        var database = Firebase.database.getReference("Viajes").child(Firebase.auth.currentUser?.uid.toString()).child("Chat")
+        database.push().setValue(Mensaje("Este es el chat de Ray!","Ray!","","1",":D"))
     }
 
     private fun enableChat() {
         chatBtnDriver.setOnClickListener {
+            if(chatLayoutDriver.visibility == View.GONE)
+            {
+                chatLayoutDriver.visibility = View.VISIBLE
+            }
+            else if (chatLayoutDriver.visibility == View.VISIBLE){
+                chatLayoutDriver.visibility = View.GONE
+            }
+        }
+
+        closeBtnDriverChat.setOnClickListener {
             if(chatLayoutDriver.visibility == View.GONE)
             {
                 chatLayoutDriver.visibility = View.VISIBLE
@@ -109,8 +128,8 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
         rvMensajes.adapter = adapter
 
         btnEnviar.setOnClickListener {
-
-            database.push().setValue(Mensaje(txtMensajes.text.toString(),myName,"","1","00:00"))
+            var time = java.util.Calendar.getInstance().time.hours.toString()+":"+java.util.Calendar.getInstance().time.minutes.toString()
+            database.push().setValue(Mensaje(txtMensajes.text.toString(),myName,"","1",time))
             txtMensajes.setText("")
         }
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -131,7 +150,15 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
-
+                if(FirstMsg) {
+                    FirstMsg = false
+                    stopLocationUpdates()
+                    MakeToast("El usuario ha cancelado el viaje :c")
+                    Intent(
+                        applicationContext,
+                        ConductorHome::class.java
+                    ).apply { startActivity(this) }
+                }
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
@@ -177,6 +204,7 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
                 database.setValue(DataUser(name, apellido, locationActual))
             }
             else{
+
                 database.child("locationActual").setValue(locationActual)
             }
 
@@ -219,9 +247,10 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
 
 
-    fun destroyInfo(){ Firebase.database.getReference("ConductorLooking").child(Firebase.auth?.uid.toString()).apply {this.onDisconnect().removeValue()}}
+    fun destroyInfo(){Firebase.database.getReference("Viajes").child(Firebase.auth.currentUser?.uid.toString()).onDisconnect().removeValue()}
     fun destroyInfoNow(){
         var identificador = intent.getStringExtra("uI")?:""
+        Firebase.database.getReference("Viajes").child(Firebase.auth.currentUser?.uid.toString()).removeValue()
         Firebase.database.getReference("PasajeroLooking").child(identificador).child("Peticiones").child(Firebase.auth?.uid.toString()).apply {this.removeValue()}
     }
 
@@ -243,7 +272,7 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
                 if (p0.locations.isNotEmpty()) {
                     var location = p0.lastLocation
                     loadUsers(location.latitude,location.longitude)
-                    loadData()
+                    //loadData()
                     agregarMarcador(location.latitude,location.longitude)
 
                 }
@@ -292,13 +321,16 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
     }
 
     fun cancelarRide(){
+
         AlertDialog.Builder(this).apply {
             this.setTitle("Cancelar Viaje?")
             this.setMessage("Se te aplicara un pequeña tarifa por esta accion.\nEstas seguro?")
 
             this.setPositiveButton("Si,Cancelar",DialogInterface.OnClickListener { dialog, which ->
-                //TODO Aqui cuando el usuario acepta cancelar viaje
-                onBackPressed()
+                stopLocationUpdates()
+                destroyInfoNow()
+                Intent(applicationContext,ConductorHome::class.java).apply { startActivity(this) }
+
             })
 
             this.setNegativeButton("No, Continuar viaje", DialogInterface.OnClickListener { dialog, which ->
@@ -306,7 +338,6 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
             })
             this.show()
         }
-
     }
 
 
@@ -339,13 +370,20 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        //stopLocationUpdates()
-
-        destroyInfoNow()
-        Intent(this,ConductorHome::class.java).apply { startActivity(this) }
+        //super.onBackPressed()
+if(chatLayoutDriver.visibility == View.VISIBLE)
+{
+    chatLayoutDriver.visibility = View.GONE
+}
+        else if(chatLayoutDriver.visibility == View.GONE)
+{
+            cancelarRide()
+}
 
     }
+
+    private fun MakeToast(text:String){
+        Toast.makeText(this,text, Toast.LENGTH_LONG).show()}
 
     override fun onMapReady(google: GoogleMap) {
         mMap = google

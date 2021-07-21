@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ConductorUsers">
+    tools:context=".ConductorUsers"
+    android:keepScreenOn="true">
 
     <ScrollView
         android:id="@+id/myScroll_Layout"
