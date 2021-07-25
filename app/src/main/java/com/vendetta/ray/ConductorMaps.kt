@@ -47,6 +47,7 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
     private var isFirstTime = true
     private var FirstMsg = true
     var myName = ""
+    private var IcancelRide=false;
 
     private var myCoordenadas = Location("0")
     private var list = arrayListOf<DataSnapshot>()
@@ -128,9 +129,16 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
         rvMensajes.adapter = adapter
 
         btnEnviar.setOnClickListener {
-            var time = java.util.Calendar.getInstance().time.hours.toString()+":"+java.util.Calendar.getInstance().time.minutes.toString()
+
+            if(txtMensajes.text.isNotEmpty())
+            {
+                var time = java.util.Calendar.getInstance().time.hours.toString()+":"+java.util.Calendar.getInstance().time.minutes.toString()
             database.push().setValue(Mensaje(txtMensajes.text.toString(),myName,"","1",time))
             txtMensajes.setText("")
+            }
+            else{
+                MakeToast("Escribe algo antes de enviar")
+            }
         }
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
@@ -150,10 +158,15 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
+
                 if(FirstMsg) {
                     FirstMsg = false
                     stopLocationUpdates()
-                    MakeToast("El usuario ha cancelado el viaje :c")
+                    if(IcancelRide){
+                        MakeToast("Has cancelado el viaje")
+                    }
+                    else{
+                    MakeToast("El usuario ha cancelado el viaje :c")}
                     Intent(
                         applicationContext,
                         ConductorHome::class.java
@@ -327,6 +340,7 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
             this.setMessage("Se te aplicara un pequeña tarifa por esta accion.\nEstas seguro?")
 
             this.setPositiveButton("Si,Cancelar",DialogInterface.OnClickListener { dialog, which ->
+               IcancelRide=true;
                 stopLocationUpdates()
                 destroyInfoNow()
                 Intent(applicationContext,ConductorHome::class.java).apply { startActivity(this) }

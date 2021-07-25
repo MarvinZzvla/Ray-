@@ -46,6 +46,7 @@ class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
     private var myName= ""
     private var identificador =""
     private var isFirstMsg = true
+    private var IcancelRide = false
 
     var myCoordenadas = Location("0")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -250,6 +251,7 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
 
             this.setPositiveButton("Si,Cancelar", DialogInterface.OnClickListener { dialog, which ->
                 //TODO Aqui cuando el usuario acepta cancelar viaje
+                IcancelRide=true
                stopLocationUpdates()
                 destroyInfoNow()
                 Intent(applicationContext, PasajeroHome::class.java).apply { startActivity(this) }
@@ -276,9 +278,20 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
         rvMensajes.adapter = adapter
 
         btnEnviar.setOnClickListener {
-            var time = java.util.Calendar.getInstance().time.hours.toString()+":"+java.util.Calendar.getInstance().time.minutes.toString()
-            database.push().setValue(Mensaje(txtMensajes.text.toString(),myName,"","1",time))
-            txtMensajes.setText("")
+
+            if(txtMensajes.text.isNotEmpty())
+            {
+                var time = java.util.Calendar.getInstance().time.hours.toString()+":"+java.util.Calendar.getInstance().time.minutes.toString()
+                database.push().setValue(Mensaje(txtMensajes.text.toString(),myName,"","1",time))
+                txtMensajes.setText("")
+            }
+            else{
+                MakeToast("Escribe algo antes de enviar")
+            }
+//
+//            var time = java.util.Calendar.getInstance().time.hours.toString()+":"+java.util.Calendar.getInstance().time.minutes.toString()
+//            database.push().setValue(Mensaje(txtMensajes.text.toString(),myName,"","1",time))
+//            txtMensajes.setText("")
         }
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
@@ -300,7 +313,14 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
             override fun onChildRemoved(snapshot: DataSnapshot) {
                 if(isFirstMsg) {
                     stopLocationUpdates()
-                    MakeToast("El conductor ha cancelado el viaje :c")
+                    if(IcancelRide)
+                    {
+                        MakeToast("Has Cancelado el viaje :c")
+                    }
+                    else{
+                        MakeToast("El conductor ha cancelado el viaje :c")
+                    }
+
                     Intent(
                         applicationContext,
                         PasajeroHome::class.java

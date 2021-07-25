@@ -61,44 +61,100 @@ class ConductorUsers : AppCompatActivity() {
     private fun MakeToast(text:String){Toast.makeText(this,text,Toast.LENGTH_LONG).show()}
 
 
-
-/*
-LOAD USERS
-Find users around 1km of us
-and add it to a list then display it
- */
-    fun loadUsers(){
-    //Get Pasajeros Looking
-        Firebase.database.getReference("PasajeroLooking").get().addOnSuccessListener {
-    //Si existe
-            if(it.exists()) {
-                //Obtener de cada usuario su localizacion
-                for (ds in it.children) {
-                    var msg = ds.child("msg").value
-                    println("Este es el msg del usuario: " + msg)
-                    var lat = ds.child("locationActual").child("latitude").value
-                    var long = ds.child("locationActual").child("longitude").value
-
-                    var location = Location("0").apply {
-                        this.latitude = lat as Double
-                        this.longitude = long as Double
-                    }
-                    //Obtener distancia
-                    var distancia = myCoordenadas.distanceTo(location).toInt()
-
-                    //Dectectar usuarios si estan a 1KM de distancia
-                    if(distancia <= 1000) {
-                        list.add(ds)
-                    }
-                }
-                //Call myAddZZ
+    fun removeUser(snap: DataSnapshot) {
+        for(user in list)
+        {
+            if(user.key == snap.key)
+            {
+                list.remove(user)
                 myAdd()
-
             }
         }
-
-
     }
+
+    fun readUsers(){
+        Firebase.database.getReference("PasajeroLooking").addChildEventListener(object : ChildEventListener{
+            override fun onChildAdded(snap: DataSnapshot, previousChildName: String?) {
+
+                var lat = snap.child("locationActual").child("latitude").value as Double
+                var long = snap.child("locationActual").child("longitude").value as Double
+                var location = Location("0").apply {
+                    this.latitude = lat
+                    this.longitude = long
+                }
+                var distancia = myCoordenadas.distanceTo(location).toInt()
+
+                if(distancia<1000)
+                {
+                    println("Aqui:" + snap)
+                  list.add(snap)
+                    myAdd()
+                }
+
+
+
+
+
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+//                TODO("Not yet implemented")
+            }
+
+            override fun onChildRemoved(snap: DataSnapshot) {
+                removeUser(snap)
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+//                TODO("Not yet implemented")
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+//                TODO("Not yet implemented")
+            }
+
+        })
+    }
+
+
+
+///*
+//LOAD USERS
+//Find users around 1km of us
+//and add it to a list then display it
+// */
+//    fun loadUsers(){
+//    //Get Pasajeros Looking
+//        Firebase.database.getReference("PasajeroLooking").get().addOnSuccessListener {
+//    //Si existe
+//            if(it.exists()) {
+//                //Obtener de cada usuario su localizacion
+//                for (ds in it.children) {
+//                    var msg = ds.child("msg").value
+//                    println("Este es el msg del usuario: " + msg)
+//                    var lat = ds.child("locationActual").child("latitude").value
+//                    var long = ds.child("locationActual").child("longitude").value
+//
+//                    var location = Location("0").apply {
+//                        this.latitude = lat as Double
+//                        this.longitude = long as Double
+//                    }
+//                    //Obtener distancia
+//                    var distancia = myCoordenadas.distanceTo(location).toInt()
+//
+//                    //Dectectar usuarios si estan a 1KM de distancia
+//                    if(distancia <= 1000) {
+//                        list.add(ds)
+//                    }
+//                }
+//                //Call myAddZZ
+//                myAdd()
+//
+//            }
+//        }
+//
+//
+   // }
 
     /*
     MY ADD
@@ -107,7 +163,7 @@ and add it to a list then display it
     Despues de haber mostrados todos borrar lista y obtener una actualizada
      */
     fun myAdd() {
-
+        addDriverListLayout.removeAllViews()
         for (user in list){
             var status = true
             if(user.hasChild("Peticiones"))
@@ -125,7 +181,7 @@ and add it to a list then display it
             displayUsers(name,distance,uI,status,msg)
 
         }
-        list.clear()
+       // list.clear()
 
     }
 
@@ -182,6 +238,7 @@ and add it to a list then display it
          //Agregar botonos al horizontal layout
              horizontalLayout.addView(btn1)
              horizontalLayout.addView(btn2)
+
     }
 
     private fun aceptarFunction(name:String,distancia:Int,identificador:String) {
@@ -225,11 +282,15 @@ LOAD DATA
 Update localizacion del usuario
 y mandarlo a la lista de ConductorLooking
  */
-    fun loadData(lat : Double, long :Double)
+    fun loadData(lat: Double, long: Double, firstTime: Boolean)
     {
             var coordenadas = LatLng(lat, long)
             myCoordenadas.latitude = lat
             myCoordenadas.longitude = long
+        if(!firstTime)
+        {
+            readUsers()
+        }
 
             val auth = Firebase.auth.currentUser
             var database = Firebase.database.getReference("MyUsers").child(auth?.uid.toString())
@@ -280,6 +341,7 @@ y mandarlo a la lista de ConductorLooking
      */
 
     fun getLocationUpdates() {
+        var firstTime = false
 
             locationCallback = object : LocationCallback() {
 
@@ -288,16 +350,16 @@ y mandarlo a la lista de ConductorLooking
                     if (p0.locations.isNotEmpty()) {
                         var location = p0.lastLocation
                         isGpsOff()
-                        loadUsers()
-                        loadData(location.latitude, location.longitude)
-                        addDriverListLayout.removeAllViews()
+                       // loadUsers()
+                        loadData(location.latitude, location.longitude,firstTime)
+                        firstTime = true
+                       // addDriverListLayout.removeAllViews()
                     }
 
                 }
 
             }
 
-        //
     }
 
     /*
