@@ -72,6 +72,12 @@ class ConductorUsers : AppCompatActivity() {
         }
     }
 
+    /*
+//READ USERS
+//Find users around 1km of us
+//and add it to a list then display it
+// */
+
     fun readUsers(){
         Firebase.database.getReference("PasajeroLooking").addChildEventListener(object : ChildEventListener{
             override fun onChildAdded(snap: DataSnapshot, previousChildName: String?) {
@@ -90,10 +96,6 @@ class ConductorUsers : AppCompatActivity() {
                   list.add(snap)
                     myAdd()
                 }
-
-
-
-
 
             }
 
@@ -117,45 +119,6 @@ class ConductorUsers : AppCompatActivity() {
     }
 
 
-
-///*
-//LOAD USERS
-//Find users around 1km of us
-//and add it to a list then display it
-// */
-//    fun loadUsers(){
-//    //Get Pasajeros Looking
-//        Firebase.database.getReference("PasajeroLooking").get().addOnSuccessListener {
-//    //Si existe
-//            if(it.exists()) {
-//                //Obtener de cada usuario su localizacion
-//                for (ds in it.children) {
-//                    var msg = ds.child("msg").value
-//                    println("Este es el msg del usuario: " + msg)
-//                    var lat = ds.child("locationActual").child("latitude").value
-//                    var long = ds.child("locationActual").child("longitude").value
-//
-//                    var location = Location("0").apply {
-//                        this.latitude = lat as Double
-//                        this.longitude = long as Double
-//                    }
-//                    //Obtener distancia
-//                    var distancia = myCoordenadas.distanceTo(location).toInt()
-//
-//                    //Dectectar usuarios si estan a 1KM de distancia
-//                    if(distancia <= 1000) {
-//                        list.add(ds)
-//                    }
-//                }
-//                //Call myAddZZ
-//                myAdd()
-//
-//            }
-//        }
-//
-//
-   // }
-
     /*
     MY ADD
     A cada usuario en la lista obtener su localizacion
@@ -163,7 +126,7 @@ class ConductorUsers : AppCompatActivity() {
     Despues de haber mostrados todos borrar lista y obtener una actualizada
      */
     fun myAdd() {
-        addDriverListLayout.removeAllViews()
+        addPasajeroListLayout.removeAllViews()
         for (user in list){
             var status = true
             if(user.hasChild("Peticiones"))
@@ -181,7 +144,6 @@ class ConductorUsers : AppCompatActivity() {
             displayUsers(name,distance,uI,status,msg)
 
         }
-       // list.clear()
 
     }
 
@@ -194,23 +156,23 @@ class ConductorUsers : AppCompatActivity() {
             //TODO CREATE Textview para el nombre
              var myName = TextView(this)
              myName.text = name
-             addDriverListLayout.addView(myName)
+             addPasajeroListLayout.addView(myName)
 
             //TODO Create Textview para la ubicacion
             var myMsg = TextView(this)
             myMsg.text = "Localizacion: " + msg
-            addDriverListLayout.addView(myMsg)
+            addPasajeroListLayout.addView(myMsg)
 
             //TODO Create Textview for distance from user
              var myDistancia = TextView(this)
              var distanciaName = "Distancia: " + distancia.toString() + " Metros"
              myDistancia.text = distanciaName
-             addDriverListLayout.addView(myDistancia)
+             addPasajeroListLayout.addView(myDistancia)
 
             //TODO Create a horizontal layout for sort buttons
              var horizontalLayout = LinearLayout(this)
              horizontalLayout.orientation = LinearLayout.HORIZONTAL
-             addDriverListLayout.addView(horizontalLayout)
+             addPasajeroListLayout.addView(horizontalLayout)
 
             //TODO Create buttons for accept or deny user
              var btn1 = Button(this)
@@ -222,7 +184,6 @@ class ConductorUsers : AppCompatActivity() {
              }
 
 
-
          //TODO If user click accepts button
             btn2.setOnClickListener {
                 if(status && btn2.text == "Aceptar")
@@ -232,9 +193,8 @@ class ConductorUsers : AppCompatActivity() {
                 }else{
                     MakeToast("Aguarde porfavor")
                 }
-
-
             }
+
          //Agregar botonos al horizontal layout
              horizontalLayout.addView(btn1)
              horizontalLayout.addView(btn2)
@@ -243,9 +203,6 @@ class ConductorUsers : AppCompatActivity() {
 
     private fun aceptarFunction(name:String,distancia:Int,identificador:String) {
 
-
-
-        Firebase.database.getReference("PasajeroLooking").child(identificador).child("Peticiones").child(Firebase.auth.currentUser?.uid.toString()).setValue(myName)
         Firebase.database.getReference("PasajeroLooking").child(identificador).child("Peticiones").child(Firebase.auth.currentUser?.uid.toString()).child("acepto").setValue(false)
         Firebase.database.getReference("PasajeroLooking").child(identificador).child("Peticiones").child(Firebase.auth.currentUser?.uid.toString()).onDisconnect().removeValue()
         //GO TO NEXT ACTIVITY
@@ -254,7 +211,6 @@ class ConductorUsers : AppCompatActivity() {
             override fun onDataChange(aceptar: DataSnapshot) {
                 if(aceptar.value == true)
                 {
-                println("El usuario ha aceptado")
                         Intent(applicationContext,ConductorMaps::class.java).apply {
                         //Mandar usuario, nombre y distancia
                         this.putExtra("uI",identificador)
@@ -291,7 +247,6 @@ y mandarlo a la lista de ConductorLooking
         {
             readUsers()
         }
-
             val auth = Firebase.auth.currentUser
             var database = Firebase.database.getReference("MyUsers").child(auth?.uid.toString())
                 .child("Coordenadas")

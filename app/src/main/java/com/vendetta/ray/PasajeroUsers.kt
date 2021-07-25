@@ -17,12 +17,12 @@ import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.activity_conductor_users.addDriverListLayout
+import kotlinx.android.synthetic.main.activity_conductor_users.addPasajeroListLayout
 import kotlinx.android.synthetic.main.activity_pasajero_users.*
 
 //VARIABLES FOR CHECK TIME AND DETAILS OF CALLBACK FUNCTION
@@ -67,14 +67,14 @@ class PasajeroUsers : AppCompatActivity() {
             requestBtn.text = "Pedir"
             stopLocationUpdates()
             destroyInfoNow()
-            addDriverListLayout.removeAllViewsInLayout()
+            addPasajeroListLayout.removeAllViewsInLayout()
             list.clear()
         }
     }
 
     override fun onStart() {
         super.onStart()
-
+        readUsers()
 
         requestBtn.setOnClickListener {
             if(msgUbicacion.text.isNotEmpty()) {
@@ -94,6 +94,46 @@ class PasajeroUsers : AppCompatActivity() {
 
         //Stop updates if the user change activity
 
+    }
+
+    fun removeUser(snap: DataSnapshot){
+        for(user in list)
+        {
+            if(user.key == snap.key)
+            {
+                list.remove(user)
+                myAdd()
+            }
+        }
+    }
+
+    fun readUsers(){
+        var auth = Firebase.auth.currentUser?.uid
+        Firebase.database.getReference("PasajeroLooking").child(auth.toString()).child("Peticiones").addChildEventListener(object: ChildEventListener{
+            override fun onChildAdded(snap: DataSnapshot, previousChildName: String?) {
+                 Firebase.database.getReference("MyUsers").child(snap.key.toString()).get().addOnSuccessListener {
+                     list.add(it)
+                     myAdd()
+                 }
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+               // TODO("Not yet implemented")
+            }
+
+            override fun onChildRemoved(snap: DataSnapshot) {
+               removeUser(snap)
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+               // TODO("Not yet implemented")
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+               // TODO("Not yet implemented")
+            }
+
+        })
     }
 
     /*
@@ -145,10 +185,10 @@ var auth = Firebase.auth.currentUser
     Despues de haber mostrados todos borrar lista y obtener una actualizada
      */
     fun myAdd(){
-
+        addPasajeroListLayout.removeAllViews()
         for (user in list){
-            var lat = user.child("locationActual").child("latitude").getValue() as Double
-            var long = user.child("locationActual").child("longitude").getValue() as Double
+            var lat = user.child("Coordenadas").child("latitude").getValue() as Double
+            var long = user.child("Coordenadas").child("longitude").getValue() as Double
             var thisLocation = Location("0").apply {this.latitude = lat; this.longitude = long}
             var distance = myCoordenadas.distanceTo(thisLocation).toInt()
             var name = user.child("name").getValue() as String + " " + user.child("apellido").getValue() as String
@@ -157,7 +197,7 @@ var auth = Firebase.auth.currentUser
 
 
         }
-        list.clear()
+      //  list.clear()
 
     }
 
@@ -177,18 +217,18 @@ var auth = Firebase.auth.currentUser
         //TODO CREATE Textview para el nombre
         var myName = TextView(this)
         myName.text = name
-        addDriverListLayout.addView(myName)
+        addPasajeroListLayout.addView(myName)
 
         //TODO Create Textview for distance from user
         var myDistancia = TextView(this)
         var distanciaName = "Distancia: " + distancia.toString() + " Metros"
         myDistancia.text = distanciaName
-        addDriverListLayout.addView(myDistancia)
+        addPasajeroListLayout.addView(myDistancia)
 
         //TODO Create a horizontal layout for sort buttons
         var horizontalLayout = LinearLayout(this)
         horizontalLayout.orientation = LinearLayout.HORIZONTAL
-        addDriverListLayout.addView(horizontalLayout)
+        addPasajeroListLayout.addView(horizontalLayout)
         //TODO Create buttons for accept or deny user
         var btn1 = Button(this)
         var btn2 = Button(this)
@@ -274,9 +314,9 @@ var auth = Firebase.auth.currentUser
 
                 if (p0.locations.isNotEmpty()) {
                     var location = p0.lastLocation
-                    loadUsers()
+                   // loadUsers()
                     loadData(location.latitude,location.longitude)
-                    addDriverListLayout.removeAllViews()
+
                 }
             }
         }
