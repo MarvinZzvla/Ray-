@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 package com.vendetta.ray
 
 import android.Manifest
@@ -25,6 +23,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_conductor_users.*
+import java.util.ArrayList
 
 
 /*
@@ -39,18 +38,27 @@ private lateinit var locationCallback: LocationCallback
 
 //VARIABLES FOR MAKE SENSE APP
 private var myCoordenadas = Location("0")
-private var list = arrayListOf<DataSnapshot>()
+private var myList: ArrayList<DataSnapshot> = arrayListOf<DataSnapshot>()
 private var myName=""
 
 class ConductorUsers : AppCompatActivity() {
+
+    /*
+    ON CREATE
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_conductor_users)
 
     }
 
+    /*
+    ON START
+
+     */
     override fun onStart() {
         super.onStart()
+        myList.clear()
         //Start request map every 5seg around 1KM
         startLocationUpdates()
         //When disconnect stop looking people and destroy info
@@ -58,29 +66,46 @@ class ConductorUsers : AppCompatActivity() {
 
     }
 
+    /*
+    MAKE TOAST
+    Create a toast
+    Duration Long
+     */
     private fun MakeToast(text:String){Toast.makeText(this,text,Toast.LENGTH_LONG).show()}
 
-
+/*
+REMOVEUSER
+Quitar usuario de la lista a ser mostrada
+ */
     fun removeUser(snap: DataSnapshot) {
-        for(user in list)
+
+    if(myList.isNotEmpty())
+    {
+    for(user in myList)
         {
-            if(user.key == snap.key)
+            if(user.key.equals(snap.key))
             {
-                list.remove(user)
+                println("BYE $user")
+                myList.remove(user)
+                addPasajeroListLayout.removeAllViews()
                 myAdd()
+                return
             }
         }
     }
 
+    }
+
     /*
-//READ USERS
-//Find users around 1km of us
-//and add it to a list then display it
-// */
+***********  READ USERS **********
+Find users around 1km of us
+and add it to a list then display it
+ */
 
     fun readUsers(){
         Firebase.database.getReference("PasajeroLooking").addChildEventListener(object : ChildEventListener{
             override fun onChildAdded(snap: DataSnapshot, previousChildName: String?) {
+
 
                 var lat = snap.child("locationActual").child("latitude").value as Double
                 var long = snap.child("locationActual").child("longitude").value as Double
@@ -92,8 +117,7 @@ class ConductorUsers : AppCompatActivity() {
 
                 if(distancia<1000)
                 {
-                    println("Aqui:" + snap)
-                  list.add(snap)
+                  myList.add(snap)
                     myAdd()
                 }
 
@@ -104,6 +128,7 @@ class ConductorUsers : AppCompatActivity() {
             }
 
             override fun onChildRemoved(snap: DataSnapshot) {
+
                 removeUser(snap)
             }
 
@@ -126,9 +151,11 @@ class ConductorUsers : AppCompatActivity() {
     Despues de haber mostrados todos borrar lista y obtener una actualizada
      */
     fun myAdd() {
+
         addPasajeroListLayout.removeAllViews()
-        for (user in list){
+        for (user in myList){
             var status = true
+//            println("Usuario $user y el tamaño ${list.size}")
             if(user.hasChild("Peticiones"))
             {
                status = false
@@ -150,7 +177,6 @@ class ConductorUsers : AppCompatActivity() {
     /*
     DISPLAY USERS
     Crear Design de los usuarios que van a aparecer al usuario
-
      */
      fun displayUsers(name: String, distancia: Int, identificador: String, status: Boolean,msg: String) {
             //TODO CREATE Textview para el nombre
@@ -184,6 +210,9 @@ class ConductorUsers : AppCompatActivity() {
              }
 
 
+        btn1.setOnClickListener { rechazarFunction(identificador) }
+
+
          //TODO If user click accepts button
             btn2.setOnClickListener {
                 if(status && btn2.text == "Aceptar")
@@ -199,6 +228,37 @@ class ConductorUsers : AppCompatActivity() {
              horizontalLayout.addView(btn1)
              horizontalLayout.addView(btn2)
 
+    }
+
+    private fun rechazarFunction(identificador: String) {
+
+            Firebase.database.getReference("PasajeroLooking").child(identificador)
+                .child("Peticiones").child(Firebase.auth.currentUser?.uid.toString())
+                .removeValue()
+
+        for(user in myList)
+        {
+
+            if(user.key.equals(identificador))
+            {
+                myList.remove(user)
+                myAdd()
+                return
+            }
+
+        }
+
+//            if (list.isNotEmpty()) {
+//
+//            for (user in list) {
+//
+//                if(user.key.toString() == identificador)
+//                {
+//                    list.remove(user)
+//                   myAdd()
+//                }
+//            }
+//        }
     }
 
     private fun aceptarFunction(name:String,distancia:Int,identificador:String) {
@@ -224,7 +284,7 @@ class ConductorUsers : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
+//                TODO("Not yet implemented")
             }
 
         })
@@ -297,7 +357,6 @@ y mandarlo a la lista de ConductorLooking
 
     fun getLocationUpdates() {
         var firstTime = false
-
             locationCallback = object : LocationCallback() {
 
                 override fun onLocationResult(p0: LocationResult) {
@@ -314,7 +373,6 @@ y mandarlo a la lista de ConductorLooking
                 }
 
             }
-
     }
 
     /*
