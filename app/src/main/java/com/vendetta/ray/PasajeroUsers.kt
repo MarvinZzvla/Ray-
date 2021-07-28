@@ -103,6 +103,7 @@ class PasajeroUsers : AppCompatActivity() {
             {
                 list.remove(user)
                 myAdd()
+                return
             }
         }
     }
@@ -236,6 +237,10 @@ var auth = Firebase.auth.currentUser
         btn2.text = "Aceptar"
 
 
+        btn1.setOnClickListener {
+            rechazarFunction(identificador)
+        }
+
         //TODO If user click accepts button
         btn2.setOnClickListener {
                     Firebase.database.getReference("PasajeroLooking").child(Firebase.auth.currentUser?.uid.toString()).child("Peticiones").child(identificador).child("acepto").setValue(true)
@@ -257,6 +262,18 @@ var auth = Firebase.auth.currentUser
         //Agregar botonos al horizontal layout
         horizontalLayout.addView(btn1)
         horizontalLayout.addView(btn2)
+    }
+
+    private fun rechazarFunction(identificador: String){
+        for(user in list)
+        {
+            if(user.key.toString().equals(identificador))
+            {
+                list.remove(user)
+                myAdd()
+                return
+            }
+        }
     }
 
     //DATA USER FORMAT TO SEND TO FIREBASE
