@@ -22,7 +22,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.activity_conductor_users.addPasajeroListLayout
 import kotlinx.android.synthetic.main.activity_pasajero_users.*
 
 //VARIABLES FOR CHECK TIME AND DETAILS OF CALLBACK FUNCTION
@@ -243,27 +242,41 @@ var auth = Firebase.auth.currentUser
 
         //TODO If user click accepts button
         btn2.setOnClickListener {
-                    Firebase.database.getReference("PasajeroLooking").child(Firebase.auth.currentUser?.uid.toString()).child("Peticiones").child(identificador).child("acepto").setValue(true)
-                    //STOP REQUEST MAPS UPDATE
-                    stopLocationUpdates()
-                    //GO TO NEXT ACTIVITY
-                    Intent(this, PasajeroMaps::class.java).apply {
-                        //Mandar usuario, nombre y distancia
-                        this.putExtra("uI", identificador)
-                        this.putExtra("name", name)
-                        this.putExtra("distancia", distancia)
-                        destroyInfoNow()
-                        //Start activity
-                        startActivity(this)
-                    }
-
-
+        aceptarFunction(identificador,name,distancia)
         }
+
         //Agregar botonos al horizontal layout
         horizontalLayout.addView(btn1)
         horizontalLayout.addView(btn2)
     }
-
+private fun aceptarFunction(identificador: String, name: String,distancia: Int)
+{
+  var check =  Firebase.database.getReference("ConductorLooking").child(identificador).get().addOnSuccessListener {
+      if(it.exists()) {
+          Firebase.database.getReference("PasajeroLooking")
+              .child(Firebase.auth.currentUser?.uid.toString()).child("Peticiones")
+              .child(identificador)
+              .child("acepto").setValue(true)
+          //STOP REQUEST MAPS UPDATE
+          stopLocationUpdates()
+          //GO TO NEXT ACTIVITY
+          Intent(this, PasajeroMaps::class.java).apply {
+              //Mandar usuario, nombre y distancia
+              this.putExtra("uI", identificador)
+              this.putExtra("name", name)
+              this.putExtra("distancia", distancia)
+              destroyInfoNow()
+              //Start activity
+              startActivity(this)
+          }
+      }else{
+         MakeToast("Este Conductor ya ha aceptado un viaje")
+          Firebase.database.getReference("PasajeroLooking")
+              .child(Firebase.auth.currentUser?.uid.toString()).child("Peticiones")
+              .child(identificador).removeValue()
+      }
+  }
+}
     private fun rechazarFunction(identificador: String){
         for(user in list)
         {
@@ -392,6 +405,12 @@ var auth = Firebase.auth.currentUser
         super.onBackPressed()
         stopLocationUpdates()
         //destroyInfoNow()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        addPasajeroListLayout.removeAllViews()
+        list.clear()
     }
 
     private fun MakeToast(text:String){

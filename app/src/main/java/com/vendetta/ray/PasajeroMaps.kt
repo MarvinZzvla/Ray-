@@ -23,9 +23,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.vendetta.ray.databinding.ActivityPasajeroMapsBinding
@@ -43,10 +41,14 @@ class PasajeroMaps : AppCompatActivity(), OnMapReadyCallback {
    private lateinit var fusedLocationClient : FusedLocationProviderClient
    private lateinit var locationRequest : LocationRequest
    private lateinit var locationCallback: LocationCallback
+    private lateinit var mListener: ChildEventListener
+    private lateinit var database:DatabaseReference
+
     private var myName= ""
     private var identificador =""
     private var isFirstMsg = true
     private var IcancelRide = false
+
 
     var myCoordenadas = Location("0")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -266,7 +268,7 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
     }
 
     private fun setComponents() {
-        var database = Firebase.database.getReference("Viajes").child(identificador).child("Chat")
+        database = Firebase.database.getReference("Viajes").child(identificador).child("Chat")
         var fotoPerfil = userImage
         var txtMensajes =textSendPasajero
         var nombre = namePasajero
@@ -300,7 +302,7 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
             }
         })
 
-        database.addChildEventListener(object : ChildEventListener {
+      mListener = database.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 //var m = snapshot.value as Mensaje
                 adapter.addMensaje(snapshot)
@@ -311,6 +313,11 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
+                if(::mListener.isInitialized)
+                {
+                    database.removeEventListener(mListener)
+                }
+
                 if(isFirstMsg) {
                     stopLocationUpdates()
                     if(IcancelRide)
@@ -324,7 +331,8 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
                     Intent(
                         applicationContext,
                         PasajeroHome::class.java
-                    ).apply { startActivity(this) }
+                    ).apply { startActivity(this)
+                            }
                 }
             }
 
@@ -381,6 +389,14 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
         else if(chatLayoutPasajero.visibility == View.GONE){
             cancelarRide()
        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if(::mListener.isInitialized)
+        {
+            database.removeEventListener(mListener)
+        }
     }
 
     override fun onMapReady(google: GoogleMap) {

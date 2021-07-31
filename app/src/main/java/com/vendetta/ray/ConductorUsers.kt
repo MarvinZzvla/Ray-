@@ -16,14 +16,12 @@ import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_conductor_users.*
 import java.util.ArrayList
+import com.google.firebase.database.ValueEventListener as ValueEventListener1
 
 
 /*
@@ -40,6 +38,9 @@ private lateinit var locationCallback: LocationCallback
 private var myCoordenadas = Location("0")
 private var myList: ArrayList<DataSnapshot> = arrayListOf<DataSnapshot>()
 private var myName=""
+
+private lateinit var mListener: ValueEventListener1
+private lateinit var dBase:DatabaseReference
 
 class ConductorUsers : AppCompatActivity() {
 
@@ -87,7 +88,7 @@ Quitar usuario de la lista a ser mostrada
             {
                 println("BYE $user")
                 myList.remove(user)
-                addPasajeroListLayout.removeAllViews()
+                addDriverListLayout.removeAllViews()
                 myAdd()
                 return
             }
@@ -152,7 +153,7 @@ and add it to a list then display it
      */
     fun myAdd() {
 
-        addPasajeroListLayout.removeAllViews()
+        addDriverListLayout.removeAllViews()
         for (user in myList){
             var status = true
 //            println("Usuario $user y el tamaño ${list.size}")
@@ -182,23 +183,23 @@ and add it to a list then display it
             //TODO CREATE Textview para el nombre
              var myName = TextView(this)
              myName.text = name
-             addPasajeroListLayout.addView(myName)
+             addDriverListLayout.addView(myName)
 
             //TODO Create Textview para la ubicacion
             var myMsg = TextView(this)
             myMsg.text = "Localizacion: " + msg
-            addPasajeroListLayout.addView(myMsg)
+            addDriverListLayout.addView(myMsg)
 
             //TODO Create Textview for distance from user
              var myDistancia = TextView(this)
              var distanciaName = "Distancia: " + distancia.toString() + " Metros"
              myDistancia.text = distanciaName
-             addPasajeroListLayout.addView(myDistancia)
+             addDriverListLayout.addView(myDistancia)
 
             //TODO Create a horizontal layout for sort buttons
              var horizontalLayout = LinearLayout(this)
              horizontalLayout.orientation = LinearLayout.HORIZONTAL
-             addPasajeroListLayout.addView(horizontalLayout)
+             addDriverListLayout.addView(horizontalLayout)
 
             //TODO Create buttons for accept or deny user
              var btn1 = Button(this)
@@ -248,26 +249,18 @@ and add it to a list then display it
 
         }
 
-//            if (list.isNotEmpty()) {
-//
-//            for (user in list) {
-//
-//                if(user.key.toString() == identificador)
-//                {
-//                    list.remove(user)
-//                   myAdd()
-//                }
-//            }
-//        }
     }
 
     private fun aceptarFunction(name:String,distancia:Int,identificador:String) {
+
+        dBase = Firebase.database.getReference("PasajeroLooking").child(identificador).child("Peticiones").child(Firebase.auth.currentUser?.uid.toString()).child("acepto")
 
         Firebase.database.getReference("PasajeroLooking").child(identificador).child("Peticiones").child(Firebase.auth.currentUser?.uid.toString()).child("acepto").setValue(false)
         Firebase.database.getReference("PasajeroLooking").child(identificador).child("Peticiones").child(Firebase.auth.currentUser?.uid.toString()).onDisconnect().removeValue()
         //GO TO NEXT ACTIVITY
 
-        Firebase.database.getReference("PasajeroLooking").child(identificador).child("Peticiones").child(Firebase.auth.currentUser?.uid.toString()).child("acepto").addValueEventListener(object : ValueEventListener{
+    mListener = dBase.addValueEventListener(object :
+         ValueEventListener1 {
             override fun onDataChange(aceptar: DataSnapshot) {
                 if(aceptar.value == true)
                 {
@@ -277,8 +270,10 @@ and add it to a list then display it
                         this.putExtra("name",name)
                         this.putExtra("distancia",distancia)
                             destroyInfoNow()
+
                             //Start activity
                             startActivity(this)
+                            finish()
                 }
                     }
             }
@@ -424,6 +419,19 @@ y mandarlo a la lista de ConductorLooking
         //destroyInfoNow()
 
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        addDriverListLayout.removeAllViews()
+        myList.clear()
+
+       if(::mListener.isInitialized) {
+           println("IM HERE")
+           dBase.removeEventListener(mListener)
+       }
+
+    }
+
 
     override fun onBackPressed() {
         super.onBackPressed()
