@@ -269,7 +269,7 @@ data class dataUser(var name:String, var apellido:String, var locationActual:Lat
 
     private fun setComponents() {
         database = Firebase.database.getReference("Viajes").child(identificador).child("Chat")
-        var fotoPerfil = userImage
+       // var fotoPerfil = userImage
         var txtMensajes =textSendPasajero
         var nombre = namePasajero
         var rvMensajes = rvChatPasajero

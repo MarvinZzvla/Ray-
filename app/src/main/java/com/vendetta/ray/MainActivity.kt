@@ -13,6 +13,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
        //Intent(this, ActivityTest::class.java).apply { startActivity(this) }
 
 //        FirebaseApp.initializeApp(/*context=*/ this)
@@ -20,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 //        firebaseAppCheck.installAppCheckProviderFactory(
 //            SafetyNetAppCheckProviderFactory.getInstance())
 
-        //Cuando click en pasajero por primera vez
+     //   Cuando click en pasajero por primera vez
         pasajero_btn.setOnClickListener {
             val i = Intent(this, PasajeroLogin::class.java)
             startActivity(i)
@@ -55,6 +56,12 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         //Checkear sesion
         checkSession()
+// 1248 520
+        val displayMetrics = resources.displayMetrics
+        //println("Heigth: ${displayMetrics.heightPixels} Width: ${displayMetrics.widthPixels}")
+
+
+
 
     }
 

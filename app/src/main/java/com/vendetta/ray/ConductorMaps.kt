@@ -118,7 +118,7 @@ class ConductorMaps : AppCompatActivity(), OnMapReadyCallback {
 
     private fun setComponents() {
         var database = Firebase.database.getReference("Viajes").child(Firebase.auth.currentUser?.uid.toString()).child("Chat")
-        var fotoPerfil = userImage
+        //var fotoPerfil = userImage
         var txtMensajes =textSendDriver
         var nombre = nameDriver
         var rvMensajes = rvChatDriver

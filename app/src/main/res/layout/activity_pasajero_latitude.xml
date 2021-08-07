@@ -5,59 +5,136 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:id="@+id/myLinearLayout">
+    android:id="@+id/myLinearLayout"
+    android:background="@drawable/mainbtnrectangle">
 
+    <!-- Image Layout -->
     <LinearLayout
-        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/custom_retangle">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/userImage"
-            android:layout_width="50sp"
-            android:layout_height="50sp"
-            android:padding="5sp"
-            android:src="@mipmap/ic_launcher" />
-
-        <TextView
-            android:id="@+id/nameUser"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:paddingTop="100dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Marvin"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:padding="5sp"/>
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="197dp"
+                android:src="@drawable/raylogo"/>
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvMsg"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1" />
-
-    <LinearLayout
-        android:id="@+id/linearLayout3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/textSend"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Escribe un mensaje"
-            />
-        <Button
-            android:id="@+id/enviarBtn"
+        <!-- Layout Input -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Enviar" />
+            android:paddingTop="50dp"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Toolbar.Primary">
+        <EditText
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:textColorHint="@color/white"
+            android:textColor="@color/white"
+            android:fontFamily="sans-serif-black"
+            android:hint="Email o numero"
+            />
+        <EditText
+            android:gravity="center"
+            android:fontFamily="sans-serif-black"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            android:layout_gravity="center"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:hint="Contraseña"/>
+
+            <!-- Button -->
+            <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="20dp">
+        <Button
+            android:fontFamily="sans-serif-black"
+            android:background="@drawable/buttonbg"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Entrar"
+            android:textColorHint="@color/white"
+            android:textSize="18dp"
+            />
+    </LinearLayout> <!--END BUTTON -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="20dp">
+<!-- Faceboook -->
+                <LinearLayout
+                    android:layout_width="120dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/facebookrectangle">
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_facebook"
+                    android:layout_gravity="center"
+                    android:background="@drawable/facebookrectangle"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="  Facebook  "
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:fontFamily="sans-serif-black"/>
+                </LinearLayout> <!--End facebook -->
+                <Space
+                    android:layout_width="10dp"
+                    android:layout_height="wrap_content"/>
+                <!--GOOGLE -->
+                <LinearLayout
+
+                    android:layout_width="120dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/custom_retangle_white">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:paddingLeft="20dp">
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_google"
+                        android:layout_gravity="center"
+                        android:background="@color/white" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="  Google  "
+                        android:textColor="#616161"
+                        android:fontFamily="sans-serif-black"
+                        android:gravity="center"/>
+                    </LinearLayout>
 
 
-    </LinearLayout>
+                </LinearLayout><!--End GOOGLE -->
+
+            </LinearLayout>
+
+    </LinearLayout> <!-- End Layout Input -->
+
+</LinearLayout>
 
 </LinearLayout>

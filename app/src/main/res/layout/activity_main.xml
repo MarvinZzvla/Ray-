@@ -4,39 +4,85 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="@drawable/mainbtnrectangle">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:orientation="vertical">
+
+        <TextView
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:background="@drawable/border_line"
+            android:shadowDy="5.0"
+            android:shadowDx="5.0"
+            android:shadowColor="@color/black"
+            android:shadowRadius="20"
+            android:gravity="center"
+
+            android:text="ESCOJE TU OPCION"
+            android:textColor="@color/white"
+            android:fontFamily="@font/impact"
+            android:textSize="42dp" />
+
+    <LinearLayout
+        android:paddingTop="20dp"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:gravity="center_horizontal">
 
-        <Button
+        <ImageButton
             android:id="@+id/conductor_btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Conductor" />
-
-        <Button
-            android:id="@+id/pasajero_btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Pasajero" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="16dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"/>
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:scaleType="fitXY"
+            android:background="@drawable/driverlogomain"
+           />
 
     </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal">
+
+        <LinearLayout
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        <ImageButton
+            android:scaleType="fitXY"
+            android:id="@+id/pasajero_btn"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:background="@drawable/pasajerologomain"/>
+    </LinearLayout>
+
+    </LinearLayout>
+
+    </LinearLayout>
+<!--        <Button-->
+<!--            android:id="@+id/conductor_btn"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Conductor"-->
+<!--            android:layout_weight="1"/>-->
+
+<!--        <Button-->
+<!--            android:id="@+id/pasajero_btn"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Pasajero"-->
+<!--            android:layout_weight="1"-->
+<!--            android:layout_gravity="bottom" />-->
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

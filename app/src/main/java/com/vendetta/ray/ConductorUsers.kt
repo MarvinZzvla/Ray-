@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
