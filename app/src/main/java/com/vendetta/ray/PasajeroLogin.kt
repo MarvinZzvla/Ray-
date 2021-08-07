@@ -27,7 +27,7 @@ class PasajeroLogin : AppCompatActivity() {
         title = "Pasajero"
 
         //Boton Registrarse
-        intentRegistrar_btn.setOnClickListener {
+       PasajeroRegistrar_btn.setOnClickListener {
             val registerIntent = Intent(this,RegistrarPasajero::class.java)
             startActivity(registerIntent)
         }

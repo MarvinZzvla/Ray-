@@ -32,10 +32,12 @@ class ConductorLogin : AppCompatActivity() {
 
 
         //Boton Registrarse
-        intentRegistrar_btn2.setOnClickListener {
+        DriverRegistrar_btn.setOnClickListener {
             val registerIntent = Intent(this,RegistrarPasajero::class.java)
             startActivity(registerIntent)
         }
+
+
         //Iniciando FireBase
         auth = Firebase.auth
         loginConductor.setOnClickListener { SignInUser() }

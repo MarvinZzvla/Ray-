@@ -17,8 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
-            android:background="@drawable/border_line"
-            android:shadowDy="5.0"
+            android:shadowDy="8.0"
             android:shadowDx="5.0"
             android:shadowColor="@color/black"
             android:shadowRadius="20"
@@ -38,6 +37,7 @@
         android:gravity="center_horizontal">
 
         <ImageButton
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             android:id="@+id/conductor_btn"
             android:layout_width="250dp"
             android:layout_height="250dp"
@@ -59,6 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
         <ImageButton
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             android:scaleType="fitXY"
             android:id="@+id/pasajero_btn"
             android:layout_width="250dp"
@@ -69,20 +70,5 @@
     </LinearLayout>
 
     </LinearLayout>
-<!--        <Button-->
-<!--            android:id="@+id/conductor_btn"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="Conductor"-->
-<!--            android:layout_weight="1"/>-->
-
-<!--        <Button-->
-<!--            android:id="@+id/pasajero_btn"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="Pasajero"-->
-<!--            android:layout_weight="1"-->
-<!--            android:layout_gravity="bottom" />-->
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
