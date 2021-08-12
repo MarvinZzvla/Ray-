@@ -14,6 +14,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_conductor_login.*
+import kotlinx.android.synthetic.main.activity_pasajero_login.*
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
@@ -29,7 +30,14 @@ class ConductorLogin : AppCompatActivity() {
 
         title = "Conductor"
 
+        //ShowPassword
+        showPasswordDriver.setOnClickListener {
+            var type = passwordDriver.typeface
+            if (passwordDriver.inputType.equals(129)){passwordDriver.inputType = 1}
+            else{passwordDriver.inputType = 129}
+            passwordDriver.typeface = type
 
+        }
 
         //Boton Registrarse
         DriverRegistrar_btn.setOnClickListener {
@@ -48,7 +56,7 @@ class ConductorLogin : AppCompatActivity() {
     fun SignInUser() {
         //Guardar variables de email y password
         var email = emailDriver.text.toString()
-        var password = passwordlDriver.text.toString()
+        var password = passwordDriver.text.toString()
 
         /*Si la contraseña y el email estan llenos iniciar codigo
           Si es un email valido y una contraseña valida de al menos 6 caracteres

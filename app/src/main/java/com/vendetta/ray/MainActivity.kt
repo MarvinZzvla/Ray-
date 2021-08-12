@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.vendetta.ray.myFolder.ActivityTest
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -14,7 +15,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-       //Intent(this, ActivityTest::class.java).apply { startActivity(this) }
+//      Intent(this, ActivityTest::class.java).apply { startActivity(this) }
 
 //        FirebaseApp.initializeApp(/*context=*/ this)
 //        val firebaseAppCheck = FirebaseAppCheck.getInstance()

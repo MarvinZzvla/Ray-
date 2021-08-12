@@ -46,7 +46,7 @@ class RegistrarPasajero : AppCompatActivity(){
 
         //crear variable todo ok
 
-       registrarButton.setOnClickListener { registrarUser() }
+      registrarButton.setOnClickListener { registrarUser() }
 
     }
 
@@ -83,7 +83,7 @@ fun readData(){
 
     fun updateAdapter(list: ArrayList<String>){
 
-        val adapter = ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,list)
+        val adapter = ArrayAdapter(this,R.layout.spinner_style,list)
         listCiudad.adapter = adapter
 
         listCiudad.onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
@@ -113,7 +113,8 @@ fun readData(){
             nameReg = nameRegister.text.toString()
             apellido = apellidoRegister.text.toString()
             var temp = phoneRegister.text.toString()
-            telefone = temp.toInt()
+            if(temp.isNotEmpty()){telefone = temp.toInt()}
+
             isConductor = isDriver.isChecked
 
             //Si el email y las contraseñas estan correctas y no vacias crear un usuario

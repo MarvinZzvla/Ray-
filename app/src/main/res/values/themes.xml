@@ -14,7 +14,7 @@
 <!--        &lt;!&ndash; Customize your theme here. &ndash;&gt;-->
 <!--    </style> -->
 
-    <style name="RayOfficial" parent="Theme.AppCompat.NoActionBar">
+    <style name="RayOfficial" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">#00B0FF</item>
         <item name="colorPrimaryVariant">#2979FF</item>

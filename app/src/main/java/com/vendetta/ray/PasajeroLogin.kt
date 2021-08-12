@@ -26,6 +26,14 @@ class PasajeroLogin : AppCompatActivity() {
 
         title = "Pasajero"
 
+        showPasswordPasajero.setOnClickListener {
+            var type = passwordPasajero.typeface
+            if (passwordPasajero.inputType.equals(129)){passwordPasajero.inputType = 1}
+            else{passwordPasajero.inputType = 129}
+            passwordPasajero.typeface = type
+
+        }
+
         //Boton Registrarse
        PasajeroRegistrar_btn.setOnClickListener {
             val registerIntent = Intent(this,RegistrarPasajero::class.java)

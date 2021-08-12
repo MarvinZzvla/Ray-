@@ -14,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <LinearLayout
             android:paddingTop="100dp"
             android:layout_width="wrap_content"
@@ -37,27 +38,45 @@
             android:paddingTop="50dp"
             android:theme="@style/ThemeOverlay.MaterialComponents.Toolbar.Primary">
             <EditText
+                android:drawableStart="@drawable/user_ico"
                 android:id="@+id/emailDriver"
-                android:layout_gravity="center"
                 android:gravity="center"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:textColorHint="@color/white"
                 android:textColor="@color/white"
                 android:fontFamily="sans-serif-black"
-                android:hint="Email o numero"
+                android:hint="@string/pasajeroEmailLogin"
                 />
-            <EditText
-                android:id="@+id/passwordlDriver"
-                android:gravity="center"
-                android:fontFamily="sans-serif-black"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white"
-                android:layout_gravity="center"
-                android:layout_width="250dp"
+
+            <LinearLayout
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:hint="Contraseña"/>
+                android:orientation="horizontal">
+
+                <EditText
+                    android:drawableStart="@drawable/password_ico"
+                    android:id="@+id/passwordDriver"
+                    android:gravity="center"
+                    android:fontFamily="sans-serif-black"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:layout_weight="1"
+                    android:hint="Contraseña" />
+
+                <ImageView
+                    android:id="@+id/showPasswordDriver"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/showpass_ico"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"/>
+
+            </LinearLayout>
+
 
             <!-- Button -->
             <LinearLayout
@@ -66,6 +85,7 @@
                 android:layout_gravity="center"
                 android:paddingTop="20dp">
                 <Button
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
                     android:id="@+id/loginConductor"
                     android:fontFamily="sans-serif-black"
                     android:background="@drawable/buttonbg"
@@ -74,7 +94,7 @@
                     android:layout_height="wrap_content"
                     android:hint="Entrar"
                     android:textColorHint="@color/white"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
                     />
             </LinearLayout> <!--END BUTTON -->
 
@@ -83,62 +103,73 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingTop="20dp">
+
                 <!-- Faceboook -->
                 <LinearLayout
-                    android:id="@+id/fb_btnDriver"
-                    android:layout_width="120dp"
-                    android:layout_height="35dp"
-                    android:background="@drawable/facebookrectangle">
-                    <ImageButton
-
-                        android:scaleType="fitXY"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_facebook"
-                        android:layout_gravity="center"
-                        android:background="@drawable/facebookrectangle"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:fontFamily="sans-serif-black"
-                        android:gravity="center"
-                        android:text="  Facebook  "
-                        android:textColor="@color/white" />
-                </LinearLayout> <!--End facebook -->
-                <Space
-                    android:layout_width="10dp"
-                    android:layout_height="wrap_content"/>
-                <!--GOOGLE -->
-                <LinearLayout
-                    android:id="@+id/google_btnDriver"
-                    android:layout_width="120dp"
-                    android:layout_height="35dp"
-                    android:background="@drawable/custom_retangle_white">
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp">
                     <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:paddingLeft="20dp">
+                        android:id="@+id/fb_btnDriver"
+                        android:layout_width="120dp"
+                        android:layout_height="35dp"
+                        android:background="@drawable/facebookrectangle">
 
                         <ImageButton
                             android:scaleType="fitXY"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_google"
+                            android:src="@drawable/ic_facebook"
                             android:layout_gravity="center"
-                            android:background="@color/white" />
+                            android:background="@drawable/facebookrectangle"/>
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:text="  Google  "
-                            android:textColor="#616161"
                             android:fontFamily="sans-serif-black"
-                            android:gravity="center"/>
+                            android:gravity="center"
+                            android:text="  Facebook  "
+                            android:textColor="@color/white" />
                     </LinearLayout>
+                </LinearLayout><!--End facebook -->
+
+                <!--GOOGLE -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp">
+                    <LinearLayout
+                        android:id="@+id/google_btnDriver"
+                        android:layout_width="120dp"
+                        android:layout_height="35dp"
+                        android:background="@drawable/custom_retangle_white">
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:paddingStart="20dp"
+                            tools:ignore="RtlSymmetry">
+
+                            <ImageButton
+                                android:scaleType="fitXY"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_google"
+                                android:layout_gravity="center"
+                                android:background="@color/white" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:text="  Google  "
+                                android:textColor="#616161"
+                                android:fontFamily="sans-serif-black"
+                                android:gravity="center"/>
+                        </LinearLayout>
 
 
+                    </LinearLayout>
                 </LinearLayout><!--End GOOGLE -->
+
 
             </LinearLayout>
 
@@ -157,7 +188,7 @@
                 android:fontFamily="sans-serif-black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="18dp"
+                android:textSize="18sp"
                 android:textAllCaps="false"
                 android:text=" No tienes cuenta? "
                 android:textColor="@color/white"/>

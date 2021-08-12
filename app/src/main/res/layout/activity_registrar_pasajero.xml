@@ -1,122 +1,367 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegistrarPasajero">
+    android:background="@drawable/mainbtnrectangle"
+    android:orientation="vertical">
 
+    <!--Background in TOP -->
     <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+
+        <ImageView
+            android:scaleType="fitXY"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:src="@drawable/background_top_register" />
+    </LinearLayout> <!--END Background TOP -->
+
+
+    <!--Input LAYOUT -->
+    <LinearLayout
+        android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_weight="1"
         android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:background="@drawable/inputbox_bg">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/nameRegister"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="Nombre"
-                android:inputType="textPersonName" />
-
-            <EditText
-                android:id="@+id/apellidoRegister"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <!-- Nombre Input -->
+            <LinearLayout
+                android:layout_margin="10dp"
+                android:background="@drawable/input_bg"
                 android:layout_weight="1"
-                android:ems="10"
-                android:hint="Apellido"
-                android:inputType="textPersonName" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/nameRegister"
+                    android:textColor="@color/black"
+                    android:fontFamily="sans-serif-black"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Nombre"
+                    android:gravity="center"
+                    android:textColorHint="#989595"/>
+            </LinearLayout><!--END nombre Input -->
+
+            <!--APELLIDO -->
+            <LinearLayout
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/input_bg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/apellidoRegister"
+                    android:textColor="@color/black"
+                    android:fontFamily="sans-serif-black"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Apellido"
+                    android:textColorHint="#989595"
+                    android:gravity="center"/>
+            </LinearLayout> <!--END Apellido -->
+
         </LinearLayout>
 
-        <EditText
-            android:id="@+id/emailRegister"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Email"
-            android:inputType="textEmailAddress" />
-
-        <EditText
-            android:id="@+id/passwordRegister"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Contraseña (6 Caracteres)"
-            android:inputType="textPassword" />
-
-        <EditText
-            android:id="@+id/confirmarPasswordRegister"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Confirmar Contraseña"
-            android:inputType="textPassword" />
-
-        <EditText
-            android:id="@+id/phoneRegister"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Numero de telefono"
-            android:inputType="phone" />
-
+        <!--EMAIL INPUT -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_margin="10dp"
+            android:background="@drawable/input_bg">
+
+            <EditText
+                android:inputType="textEmailAddress"
+                android:id="@+id/emailRegister"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:textColorHint="#989595"
+                android:fontFamily="sans-serif-black" />
+        </LinearLayout> <!-- END EMAIL INPUT  -->
+
+        <!--PASSWORD INPUT -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/input_bg">
+
+            <EditText
+                android:id="@+id/passwordRegister"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Contraseña (6 caracteres)"
+                android:textColorHint="#989595"
+                android:fontFamily="sans-serif-black"
+                android:inputType="textPassword"/>
+        </LinearLayout> <!-- END PASSWORD INPUT  -->
+        <!--CONFIRM INPUT -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/input_bg">
+
+            <EditText
+                android:id="@+id/confirmarPasswordRegister"
+                android:inputType="textPassword"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Confirmar Contraseña"
+                android:textColorHint="#989595"
+                android:fontFamily="sans-serif-black" />
+        </LinearLayout> <!-- END CONFIRM INPUT  -->
+
+        <!--PHONE INPUT -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/input_bg">
+
+            <EditText
+                android:inputType="phone"
+                android:id="@+id/phoneRegister"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Numero de Celular"
+                android:textColorHint="#989595"
+                android:fontFamily="sans-serif-black" />
+        </LinearLayout> <!-- END PHONE INPUT  -->
+
+        <!--SPINNER LAYOUT -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal"
+            android:background="@drawable/input_bg">
 
             <TextView
-
-                android:id="@+id/ListText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:gravity="center_horizontal"
-                android:text="Ciudad    "></TextView>
+                android:textColor="#989595"
+                android:text="Ciudad"
+                android:fontFamily="sans-serif-black"
+                android:textSize="21sp"
+                android:padding="10dp"/>
 
             <Spinner
+                android:background="@drawable/spinner_bg"
+                android:layout_weight="1"
                 android:id="@+id/listCiudad"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"></Spinner>
-        </LinearLayout>
+                android:layout_gravity="center|end" />
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="16dp" />
+        </LinearLayout> <!--END SPINNER LAYOUT -->
 
+        <!--BUTTON REGISTRAR AND DRIVER -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/registrarButton"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:background="@drawable/buttonbg"
+                android:textColorHint="@color/white"
+                android:fontFamily="sans-serif-black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Registrar" />
+                android:hint="Registrarse"/>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/input_bg"
+                android:paddingEnd="20dp"
+                android:layout_marginEnd="10dp">
 
             <CheckBox
                 android:id="@+id/isDriver"
+                android:fontFamily="sans-serif-black"
+                android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingRight="8dp"
-                android:text="Conductor" />
+                android:text="Conductor"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout><!-- END REGISTRAR BTN AND DRIVER -->
 
-        </LinearLayout>
+
 
     </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <!-- Image BackGround Bottom -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:src="@drawable/background_register" />
+    </LinearLayout>
+
+
+</LinearLayout>
+
+<!--<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    tools:context=".RegistrarPasajero"-->
+<!--    android:background="@drawable/mainbtnrectangle">-->
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_marginStart="8dp"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:layout_marginEnd="8dp"-->
+<!--        android:orientation="vertical"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent">-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal">-->
+
+<!--            <EditText-->
+<!--                android:id="@+id/nameRegister"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:ems="10"-->
+<!--                android:hint="Nombre"-->
+<!--                android:inputType="textPersonName" />-->
+
+<!--            <EditText-->
+<!--                android:id="@+id/apellidoRegister"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:ems="10"-->
+<!--                android:hint="Apellido"-->
+<!--                android:inputType="textPersonName" />-->
+<!--        </LinearLayout>-->
+
+<!--        <EditText-->
+<!--            android:id="@+id/emailRegister"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:ems="10"-->
+<!--            android:hint="Email"-->
+<!--            android:inputType="textEmailAddress" />-->
+
+<!--        <EditText-->
+<!--            android:id="@+id/passwordRegister"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:ems="10"-->
+<!--            android:hint="Contraseña (6 Caracteres)"-->
+<!--            android:inputType="textPassword" />-->
+
+<!--        <EditText-->
+<!--            android:id="@+id/confirmarPasswordRegister"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:ems="10"-->
+<!--            android:hint="Confirmar Contraseña"-->
+<!--            android:inputType="textPassword" />-->
+
+<!--        <EditText-->
+<!--            android:id="@+id/phoneRegister"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:ems="10"-->
+<!--            android:hint="Numero de telefono"-->
+<!--            android:inputType="phone" />-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal">-->
+
+<!--            <TextView-->
+
+<!--                android:id="@+id/ListText"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="end"-->
+<!--                android:gravity="center_horizontal"-->
+<!--                android:text="Ciudad    "></TextView>-->
+
+<!--            <Spinner-->
+<!--                android:id="@+id/listCiudad"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="end"></Spinner>-->
+<!--        </LinearLayout>-->
+
+<!--        <Space-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="16dp" />-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:orientation="horizontal">-->
+
+<!--            <Button-->
+<!--                android:background="@drawable/buttonbg"-->
+<!--                android:id="@+id/registrarButton"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="Registrar" />-->
+
+<!--            <CheckBox-->
+<!--                android:id="@+id/isDriver"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:paddingRight="8dp"-->
+<!--                android:text="Conductor" />-->
+
+<!--        </LinearLayout>-->
+
+<!--    </LinearLayout>-->
+<!--</androidx.constraintlayout.widget.ConstraintLayout>-->
